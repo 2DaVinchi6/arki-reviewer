@@ -18,11 +18,7 @@ img { max-width:100%; margin-top:10px; }
 
 <body>
 
-<!-- START -->
-<div class="container" id="start">
-  <h2>Structural Conceptualization Quiz Reviewer</h2>
-  <button onclick="startQuiz()">Start Quiz</button>
-</div>
+
 
 <!-- SITUATION MENU -->
 <div class="container" id="situationMenu" style="display:none;">
@@ -3228,17 +3224,12 @@ if (savedSituations) {
   });
 }
 
-  
-/* ========= START ========= */
-function startQuiz() {
-  document.getElementById("start").style.display = "none";
-  showSituationMenu();
-}
 
 /* ========= SITUATION MENU ========= */
 function showSituationMenu() {
   document.getElementById("quiz").style.display = "none";
   document.getElementById("situationMenu").style.display = "block";
+  document.getElementById("start").style.display = "none";
 
   const list = document.getElementById("situationList");
   list.innerHTML = "";
@@ -3404,9 +3395,13 @@ function nextQuestion() {
     showSituationComplete();
   }
 }
+window.onload = () => {
+  showSituationMenu();
+};
 
 </script>
 
 </body>
 </html>
+
 
