@@ -3,51 +3,61 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Structural Conceptualization Quiz Reviewer</title>
+
+<title>Structural Reviewer</title>
 
 <style>
-body { font-family: Arial, sans-serif; background:#f4f6f8; padding:20px; }
-.container { max-width:760px; margin:auto; background:#fff; padding:20px; border-radius:8px; }
-button { width:100%; padding:12px; margin:8px 0; font-size:16px; cursor:pointer; }
+body {
+  font-family: Arial, sans-serif;
+  background:#f4f6f8;
+  padding:20px;
+}
+.container {
+  max-width:760px;
+  margin:auto;
+  background:#fff;
+  padding:20px;
+  border-radius:8px;
+}
+button {
+  width:100%;
+  padding:12px;
+  margin:8px 0;
+  font-size:16px;
+  cursor:pointer;
+}
 .correct { background:#4CAF50; color:#fff; }
 .wrong { background:#F44336; color:#fff; }
-img { max-width:100%; margin-top:10px; }
-.watermark { text-align:center; font-size:10px; color:#aaa; margin-top:30px; }
+#figure { max-width:100%; margin-top:10px; display:none; }
+#nextBtn { display:none; }
+.watermark {
+  text-align:center;
+  font-size:10px;
+  color:#aaa;
+  margin-top:30px;
+}
 </style>
 </head>
 
 <body>
 
-<!-- SITUATION MENU -->
+<!-- HUB -->
 <div class="container" id="situationMenu">
-
-  <!-- Back to Hub -->
-  <button onclick="goBackToHub()" style="background:#555;color:#fff;">
-    ⬅ Back to Hub
-  </button>
-
-  <h2>Structural Conceptualization</h2>
+  <h2>Select Situation</h2>
   <div id="situationList"></div>
   <button onclick="showFinalSummary()">Finish Review</button>
 </div>
 
-
-<!-- QUIZ -->
 <!-- QUIZ -->
 <div class="container" id="quiz" style="display:none;">
-
-  <button onclick="goBackToHub()" style="background:#555;color:#fff;">
-    ⬅ Back to Hub
-  </button>
-
+  <button onclick="showSituationMenu()">⬅ Back to Hub</button>
   <h3 id="situation"></h3>
   <p id="question"></p>
-  <img id="figure" style="display:none;">
+  <img id="figure">
   <div id="choices"></div>
   <button id="nextBtn" onclick="nextQuestion()">Next</button>
   <p id="progress"></p>
 </div>
-
 
 <!-- SITUATION COMPLETE -->
 <div class="container" id="situationComplete" style="display:none;">
@@ -58,9 +68,7 @@ img { max-width:100%; margin-top:10px; }
     Restart This Situation
   </button>
 
-  <button onclick="showSituationMenu()">
-    Back to Situation Menu
-  </button>
+  <button onclick="showSituationMenu()">Back to Hub</button>
 </div>
 
 <!-- FINAL SUMMARY -->
@@ -69,17 +77,17 @@ img { max-width:100%; margin-top:10px; }
   <div id="summaryList"></div>
   <hr>
   <p id="totalScore"></p>
-  <button onclick="location.reload()">Restart Review</button>
+  <button onclick="resetAll()">Restart Everything</button>
 </div>
 
 <div class="watermark">tikbalang reviewer</div>
 
 <script>
-/* ================= QUESTIONS ================= */
-/* ⚠ KEEP YOUR FULL QUESTIONS ARRAY HERE */
-/* (UNCHANGED — yours is already correct) */
+/* =========================
+   QUESTIONS
+   ========================= */
 const questions = [
-  {
+  /{
 
   situation: "Situation 10 – Structural Systems (Figures)",
   question: "Which figure uses diagonal structural technology?",
@@ -3185,10 +3193,11 @@ const questions = [
   choices: ["Cement", "Aggregate", "Sand", "Water"],
   correct: "Aggregate"
 }
+];
 
-]; // ← KEEP YOUR FULL ARRAY EXACTLY AS IS
-
-/* ============== BUILD SITUATIONS ============== */
+/* =========================
+   BUILD SITUATIONS
+   ========================= */
 const situations = {};
 questions.forEach(q => {
   if (!situations[q.situation]) {
@@ -3204,36 +3213,29 @@ questions.forEach(q => {
 
 let currentSituation = null;
 
-/* ============== STORAGE ============== */
-function saveSituationState() {
-  localStorage.setItem("struct-situations", JSON.stringify(situations));
-}
-
-function saveHubProgress() {
-  let answered = 0;
-  let total = 0;
-
-  Object.values(situations).forEach(s => {
-    answered += s.index;
-    total += s.questions.length;
-  });
-
-  const percent = total === 0 ? 0 : Math.floor((answered / total) * 100);
-  localStorage.setItem("progress-struct", percent);
-}
-
-/* LOAD SAVED */
+/* =========================
+   LOAD SAVED STATE
+   ========================= */
 const saved = localStorage.getItem("struct-situations");
 if (saved) {
   const parsed = JSON.parse(saved);
   Object.keys(parsed).forEach(k => {
     if (situations[k]) {
-      Object.assign(situations[k], parsed[k]);
+      situations[k] = parsed[k];
     }
   });
 }
 
-/* ============== MENU ============== */
+/* =========================
+   SAVE STATE
+   ========================= */
+function saveState() {
+  localStorage.setItem("struct-situations", JSON.stringify(situations));
+}
+
+/* =========================
+   HUB
+   ========================= */
 function showSituationMenu() {
   hideAll();
   document.getElementById("situationMenu").style.display = "block";
@@ -3243,11 +3245,8 @@ function showSituationMenu() {
 
   Object.keys(situations).forEach(key => {
     const s = situations[key];
-    let status = s.completed
-      ? "Completed"
-      : s.index > 0
-      ? "In Progress"
-      : "Not Started";
+    let status = s.completed ? "Completed" :
+                 s.index > 0 ? "In Progress" : "Not Started";
 
     const btn = document.createElement("button");
     btn.innerText = `${key} — ${status} (${s.score}/${s.questions.length})`;
@@ -3259,31 +3258,47 @@ function showSituationMenu() {
   });
 }
 
-/* ============== QUIZ ============== */
+/* =========================
+   START / RESUME
+   ========================= */
 function startSituation() {
+  const s = situations[currentSituation];
+
+  if (s.index >= s.questions.length) {
+    showSituationComplete();
+    return;
+  }
+
   hideAll();
   document.getElementById("quiz").style.display = "block";
   loadQuestion();
 }
 
+/* =========================
+   LOAD QUESTION
+   ========================= */
 function loadQuestion() {
   const s = situations[currentSituation];
+
+  if (s.index >= s.questions.length) {
+    showSituationComplete();
+    return;
+  }
+
   const q = s.questions[s.index];
 
-  document.getElementById("situation").innerText = q.situation;
-  document.getElementById("question").innerText = q.question;
-  document.getElementById("progress").innerText =
-    `Question ${s.index + 1} of ${s.questions.length} | Score: ${s.score}`;
+  situation.innerText = q.situation;
+  question.innerText = q.question;
+  progress.innerText = `Question ${s.index + 1} of ${s.questions.length} | Score: ${s.score}`;
 
-  const img = document.getElementById("figure");
   if (q.image) {
-    img.src = q.image;
-    img.style.display = "block";
-  } else img.style.display = "none";
+    figure.src = q.image;
+    figure.style.display = "block";
+  } else {
+    figure.style.display = "none";
+  }
 
-  const choices = document.getElementById("choices");
   choices.innerHTML = "";
-
   [...q.choices].sort(() => Math.random() - 0.5).forEach(choice => {
     const btn = document.createElement("button");
     btn.innerText = choice;
@@ -3291,9 +3306,12 @@ function loadQuestion() {
     choices.appendChild(btn);
   });
 
-  document.getElementById("nextBtn").style.display = "none";
+  nextBtn.style.display = "none";
 }
 
+/* =========================
+   CHECK ANSWER
+   ========================= */
 function checkAnswer(btn, choice) {
   const s = situations[currentSituation];
   const q = s.questions[s.index];
@@ -3310,93 +3328,97 @@ function checkAnswer(btn, choice) {
     });
   }
 
-  document.getElementById("nextBtn").style.display = "block";
+  saveState();
+  nextBtn.style.display = "block";
 }
 
+/* =========================
+   NEXT
+   ========================= */
 function nextQuestion() {
   const s = situations[currentSituation];
   s.index++;
 
-  saveSituationState();
-  saveHubProgress();
-
   if (s.index < s.questions.length) {
+    saveState();
     loadQuestion();
   } else {
     s.completed = true;
-    saveSituationState();
-    saveHubProgress();
+    saveState();
     showSituationComplete();
   }
 }
 
-/* ============== COMPLETE ============== */
+/* =========================
+   COMPLETE
+   ========================= */
 function showSituationComplete() {
-  hideAll();
   const s = situations[currentSituation];
+
+  hideAll();
   document.getElementById("situationComplete").style.display = "block";
-  document.getElementById("completeTitle").innerText = currentSituation;
-  document.getElementById("completeScore").innerText =
-    `Score: ${s.score} / ${s.questions.length}`;
+  completeTitle.innerText = currentSituation;
+  completeScore.innerText = `Score: ${s.score} / ${s.questions.length}`;
 }
 
+/* =========================
+   RESTART SITUATION
+   ========================= */
 function restartSituation() {
   const s = situations[currentSituation];
   s.index = 0;
   s.score = 0;
   s.completed = false;
-
-  saveSituationState();
-  saveHubProgress();
-
+  saveState();
   startSituation();
 }
 
-/* ============== SUMMARY ============== */
+/* =========================
+   SUMMARY
+   ========================= */
 function showFinalSummary() {
   hideAll();
   document.getElementById("summary").style.display = "block";
 
-  const list = document.getElementById("summaryList");
-  list.innerHTML = "";
+  let totalScore = 0, totalQuestions = 0;
+  summaryList.innerHTML = "";
 
-  let totalScore = 0;
-  let totalQuestions = 0;
-
-  Object.keys(situations).forEach(key => {
-    const s = situations[key];
+  Object.values(situations).forEach(s => {
     const p = document.createElement("p");
-
     if (s.index === 0 && s.score === 0) {
-      p.innerText = `${key}: Not Started`;
+      p.innerText = `${s.questions[0].situation}: Skipped`;
     } else {
-      p.innerText = `${key}: ${s.score}/${s.questions.length}`;
+      p.innerText = `${s.questions[0].situation}: ${s.score}/${s.questions.length}`;
       totalScore += s.score;
       totalQuestions += s.questions.length;
     }
-
-    list.appendChild(p);
+    summaryList.appendChild(p);
   });
 
-  document.getElementById("totalScore").innerText =
-    `TOTAL SCORE: ${totalScore} / ${totalQuestions}`;
+  totalScoreElem = document.getElementById("totalScore");
+  totalScoreElem.innerText = `TOTAL SCORE: ${totalScore} / ${totalQuestions}`;
 }
 
-/* ============== UTIL ============== */
+/* =========================
+   RESET ALL
+   ========================= */
+function resetAll() {
+  localStorage.removeItem("struct-situations");
+  location.reload();
+}
+
+/* =========================
+   UTILS
+   ========================= */
 function hideAll() {
-  ["situationMenu","quiz","summary","situationComplete"]
-    .forEach(id => document.getElementById(id).style.display = "none");
+  document.querySelectorAll(".container").forEach(c => c.style.display = "none");
 }
 
-window.onload = showSituationMenu;
-
-  function goBackToHub() {
-  window.location.href = "../index.html";
-}
-
+/* =========================
+   INIT
+   ========================= */
+showSituationMenu();
 </script>
 
 </body>
 </html>
-
-
