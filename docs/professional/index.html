@@ -46,6 +46,9 @@ button {
   <h2>Select Situation</h2>
   <div id="situationList"></div>
   <button onclick="showFinalSummary()">Finish Review</button>
+   <button onclick="backToReviewHub()" style="background:#555;color:#fff;">
+    ⬅ Back to Review Hub
+  </button>
 </div>
 
 <!-- QUIZ -->
@@ -6366,6 +6369,9 @@ function resetAll() {
 function hideAll() {
   document.querySelectorAll(".container").forEach(c => c.style.display = "none");
 }
+function backToReviewHub() {
+  window.location.href = "../index.html";
+}
 
 /* =========================
    INIT
@@ -6375,5 +6381,6 @@ showSituationMenu();
 
 </body>
 </html>
+
 
 
