@@ -1,0 +1,4141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>History of Architecture</title>
+
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background:#f4f6f8;
+  padding:20px;
+}
+.container {
+  max-width:760px;
+  margin:auto;
+  background:#fff;
+  padding:20px;
+  border-radius:8px;
+}
+button {
+  width:100%;
+  padding:12px;
+  margin:8px 0;
+  font-size:16px;
+  cursor:pointer;
+}
+.correct { background:#4CAF50; color:#fff; }
+.wrong { background:#F44336; color:#fff; }
+#figure { max-width:100%; margin-top:10px; display:none; }
+#nextBtn { display:none; }
+.watermark {
+  text-align:center;
+  font-size:10px;
+  color:#aaa;
+  margin-top:30px;
+}
+</style>
+</head>
+
+<body>
+
+<!-- START -->
+<div class="container" id="start">
+  <h2>History of Architecture</h2>
+  <input id="username" placeholder="Enter your name" style="width:100%;padding:10px;">
+  <button onclick="startQuiz()">Start Quiz</button>
+</div>
+
+<!-- SITUATION MENU -->
+<div class="container" id="situationMenu" style="display:none;">
+  <h2>Select Situation</h2>
+  <div id="situationList"></div>
+  <button onclick="showFinalSummary()">Finish Review</button>
+</div>
+
+<!-- QUIZ -->
+<div class="container" id="quiz" style="display:none;">
+  <h3 id="situation"></h3>
+  <p id="question"></p>
+  <img id="figure">
+  <div id="choices"></div>
+  <button id="nextBtn" onclick="nextQuestion()">Next</button>
+  
+  <p id="progress"></p>
+</div>
+
+<!-- SITUATION COMPLETE -->
+<div class="container" id="situationComplete" style="display:none;">
+  <h2 id="completeTitle">Situation Complete</h2>
+  <p id="completeScore"></p>
+
+  <button onclick="restartSituation()" style="background:#ff9800;color:#fff;">
+    Restart This Situation
+  </button>
+
+  <button onclick="showSituationMenu()">
+    Back to Situation Menu
+  </button>
+</div>
+
+
+<!-- FINAL SUMMARY -->
+<div class="container" id="summary" style="display:none;">
+  <h2>Final Summary</h2>
+  <div id="summaryList"></div>
+  <hr>
+  <p id="totalScore"></p>
+  <button onclick="location.reload()">Restart Review</button>
+</div>
+
+<div class="watermark">tikbalang reviewer</div>
+
+<script>
+/* =========================
+   QUESTION BANK
+   =========================
+   👉 PASTE YOUR QUESTIONS HERE
+*/
+const questions = [
+{
+  situation: "SITUATION 01 – The following questions pertain to Topic 01: Pre-Historic Architecture. Using Figure H01-A, identify the  different locations of these pre-historic buildings.",
+  question: "Structure A can be found in",
+  choices: ["Jordan", "Iraq", "Syria", "Egypt"],
+  correct: "Iraq",
+  image: "figure1A.png"
+},
+{
+  situation: "SITUATION 01 – The following questions pertain to Topic 01: Pre-Historic Architecture. Using Figure H01-A, identify the  different locations of these pre-historic buildings.",
+  question: "Structure B can be found in",
+  choices: [
+    "Rotoroa, New Zealand",
+    "Amesbury, England",
+    "Newgrange, Ireland",
+    "Maeshowe, Scotland"
+  ],
+  correct: "Amesbury, England",
+  image: "figure1A.png"
+},
+{
+  situation: "SITUATION 01 – The following questions pertain to Topic 01: Pre-Historic Architecture. Using Figure H01-A, identify the  different locations of these pre-historic buildings.",
+  question: "Structure C can be found in",
+  choices: ["Jordan", "Iran", "Colombia", "Mexico"],
+  correct: "Mexico",
+  image: "figure1A.png"
+},
+{
+  situation: "SITUATION 01 – The following questions pertain to Topic 01: Pre-Historic Architecture. Using Figure H01-A, identify the  different locations of these pre-historic buildings.",
+  question: "Structure D can be found in",
+  choices: ["Jordan", "Iraq", "Greece", "Turkey"],
+  correct: "Iraq",
+  image: "figure1A.png"
+},
+{
+  situation: "SITUATION 01 – The following questions pertain to Topic 01: Pre-Historic Architecture. Using Figure H01-A, identify the  different locations of these pre-historic buildings.",
+  question: "Structure E can be found in",
+  choices: ["Dahshur, Egypt", "Giza, Egypt", "Khufu, Egypt", "Luxor, Egypt"],
+  correct: "Giza, Egypt",
+  image: "figure1A.png"
+},
+{
+  situation: "SITUATION 01 – The following questions pertain to Topic 01: Pre-Historic Architecture.",
+  question: "It has a central chamber that is surrounded by small chambers.",
+  choices: ["Passage", "Stone circle", "Wedge", "Court"],
+  correct: "Court"
+},
+{
+  situation: "SITUATION 01 – The following questions pertain to Topic 01: Pre-Historic Architecture.",
+  question: "Tombs oriented from north and south with long passage.",
+  choices: ["Passage", "Stone circle", "Wedge", "Court"],
+  correct: "Passage"
+},
+{
+  situation: "SITUATION 01 – The following questions pertain to Topic 01: Pre-Historic Architecture.",
+  question: "Consisting of a series of upright stones arranged in a circle and supporting horizontal slabs.",
+  choices: ["Passage", "Stone circle", "Wedge", "Court"],
+  correct: "Stone circle"
+},
+{
+  situation: "SITUATION 01 – The following questions pertain to Topic 01: Pre-Historic Architecture.",
+  question: "Formed of branches of trees and covered with turf.",
+  choices: ["Lean to", "Stone circle", "Hut", "Court"],
+  correct: "Hut"
+},
+{
+  situation: "SITUATION 01 – The following questions pertain to Topic 01: Pre-Historic Architecture.",
+  question: "One side is leaned to a cave and is supported by stones at the base.",
+  choices: ["Lean to", "Stone circle", "Hut", "Court"],
+  correct: "Lean to"
+},
+{
+  situation: "SITUATION 02 – The following questions pertain to Topic 02: Historic Style 1. Using Figure H02-A, identify the different  parts of the Parthenon.",
+  question: "Item A is called:",
+  choices: ["Architrave", "Tympanum", "Entablature", "Cornice"],
+  correct: "Cornice",
+  image: "figure2A.png"
+},
+{
+  situation: "SITUATION 02 – The following questions pertain to Topic 02: Historic Style 1. Using Figure H02-A, identify the different  parts of the Parthenon.",
+  question: "Item B is called:",
+  choices: ["Architrave", "Tympanum", "Entablature", "Cornice"],
+  correct: "Architrave",
+  image: "figure2A.png"
+},
+{
+  situation: "SITUATION 02 – The following questions pertain to Topic 02: Historic Style 1. Using Figure H02-A, identify the different  parts of the Parthenon.",
+  question: "Item C is called:",
+  choices: ["Shaft", "Tympanum", "Entablature", "Cornice"],
+  correct: "Shaft",
+  image: "figure2A.png"
+},
+{
+  situation: "SITUATION 02 – The following questions pertain to Topic 02: Historic Style 1. Using Figure H02-A, identify the different  parts of the Parthenon.",
+  question: "Item D is called:",
+  choices: ["Shaft", "Tympanum", "Entablature", "Cornice"],
+  correct: "Tympanum",
+  image: "figure2A.png"
+},
+{
+  situation: "SITUATION 02 – The following questions pertain to Topic 02: Historic Style 1. Using Figure H02-A, identify the different  parts of the Parthenon.",
+  question: "Item E is called:",
+  choices: ["Shaft", "Tympanum", "Entablature", "Cornice"],
+  correct: "Entablature",
+  image: "figure2A.png"
+},
+{
+  situation: "SITUATION 02 – The following questions pertain to Topic 02: Historic Style 1.",
+  question: "What is the construction system of the Greeks?",
+  choices: ["Trussed", "Buttressed", "Columnar and trabeated", "Arcuated"],
+  correct: "Columnar and trabeated"
+},
+{
+  situation: "SITUATION 02 – The following questions pertain to Topic 02: Historic Style 1.",
+  question: "What is the architectural character of the Greeks?",
+  choices: ["Vastness and magnificence", "Simplicity and harmony", "Ostentation and ornateness", "Solidity and massiveness"],
+  correct: "Simplicity and harmony"
+},
+{
+  situation: "SITUATION 02 – The following questions pertain to Topic 02: Historic Style 1.",
+  question: "What is the architectural character of the Romans?",
+  choices: ["Simplicity and harmony", "Solidity and massiveness", "Monumentality", "Vastness and magnificence"],
+  correct: "Monumentality"
+},
+{
+  situation: "SITUATION 02 – The following questions pertain to Topic 02: Historic Style 1.",
+  question: "What buildings are the Romans famous for?",
+  choices: ["Temple", "Amphitheater", "Aqueduct", "Dwellings"],
+  correct: "Amphitheater"
+},
+{
+  situation: "SITUATION 02 – The following questions pertain to Topic 02: Historic Style 1.",
+  question: "Most famous and largest amphitheater of the Romans.",
+  choices: ["Colosseum", "Verona", "Marcellus", "Orange"],
+  correct: "Colosseum"
+},
+{
+  situation: "SITUATION 02 – The following questions pertain to Topic 02: Historic Style 1.",
+  question: "Tomb of Egyptian architecture characterized by a flat top, battered walls, and underground burial chambers.",
+  choices: ["Mastaba", "Pyramid", "Temple", "Rock cut tomb"],
+  correct: "Mastaba"
+},
+{
+  situation: "SITUATION 02 – The following questions pertain to Topic 02: Historic Style 1.",
+  question: "There are two types of Egyptian temples: cult and mortuary. Which of the following is an example of a cult temple?",
+  choices: ["Khons", "Ramesseum", "Hatshepsut", "Mentuhotep"],
+  correct: "Khons"
+},
+{
+  situation: "SITUATION 02 – The following questions pertain to Topic 02: Historic Style 1.",
+  question: "Tall tower with a square base and a tapered top.",
+  choices: ["Obelisk", "Pyramid", "Pylon", "Mastaba"],
+  correct: "Obelisk"
+},
+{
+  situation: "SITUATION 02 – The following questions pertain to Topic 02: Historic Style 1.",
+  question: "Byzantine secular building combining private apartments, chapels, and churches.",
+  choices: [
+    "Palace of Mystras",
+    "Palace of Lausus and Antiochos",
+    "Palace of Porphyrogenitus",
+    "Palace of Constantinople"
+  ],
+  correct: "Palace of Lausus and Antiochos"
+},
+{
+  situation: "SITUATION 02 – The following questions pertain to Topic 02: Historic Style 1.",
+  question: "The largest pyramid in Giza.",
+  choices: ["Cheops", "Chephren", "Mycerinos", "Queens Pyramid"],
+  correct: "Cheops"
+},
+{
+  situation: "SITUATION 02 – The following questions pertain to Topic 02: Historic Style 1.",
+  question: "What is the supreme example of a Greek sanctuary in Athens?",
+  choices: ["Acropolis", "Erechtheion", "Parthenon", "Propylaea"],
+  correct: "Acropolis"
+},
+{
+  situation: "SITUATION 02 – The following questions pertain to Topic 02: Historic Style 1.",
+  question: "What is the principal decoration of walls and shafts of columns in Egyptian architecture?",
+  choices: ["Battered", "Hieroglyphics", "Papyrus", "Scarab"],
+  correct: "Hieroglyphics"
+},
+{
+  situation: "SITUATION 02 – The following questions pertain to Topic 02: Historic Style 1.",
+  question: "What is the most important Roman architectural structure, famous for its great dome?",
+  choices: ["Parthenon", "Pantheon", "Colosseum", "Aqueduct"],
+  correct: "Pantheon"
+},
+{
+  situation: "SITUATION 02 – The following questions pertain to Topic 02: Historic Style 1.",
+  question: "What is an alternative ornamentation used by the Romans aside from marble?",
+  choices: ["Paintings", "Painted fresco decorations", "Wall sculpture", "Granite"],
+  correct: "Painted fresco decorations"
+},
+{
+  situation: "SITUATION 02 – The following questions pertain to Topic 02: Historic Style 1.",
+  question: "Which palace of West Asiatic architecture features 250 towers and 100 bronze gates?",
+  choices: [
+    "Palace of Sargon",
+    "Palace of Xerxes",
+    "Palace of Nebuchadnezzar",
+    "Palace of Ashurbanipal"
+  ],
+  correct: "Palace of Sargon"
+},
+{
+  situation: "SITUATION 02 – The following questions pertain to Topic 02: Historic Style 1. The following questions pertain to Egyptian architecture.",
+  question: "In Egyptian architecture, what is the meaning of the symbols lotus, papyrus, and palm?",
+  choices: ["Fertility", "Eternity", "Resurrection", "Protection"],
+  correct: "Resurrection"
+},
+{
+  situation: "SITUATION 02 – The following questions pertain to Topic 02: Historic Style 1. The following questions pertain to Egyptian architecture.",
+  question: "In Egyptian architecture, what is the meaning of the symbol scarab or sacred beetle?",
+  choices: ["Fertility", "Eternity", "Resurrection", "Protection"],
+  correct: "Eternity"
+},
+{
+  situation: "SITUATION 02 – The following questions pertain to Topic 02: Historic Style 1. The following questions pertain to Egyptian architecture.",
+  question: "In Egyptian architecture, what is the meaning of the symbols spiral and feather?",
+  choices: ["Fertility", "Eternity", "Resurrection", "Protection"],
+  correct: "Fertility"
+},
+{
+  situation: "SITUATION 02 – The following questions pertain to Topic 02: Historic Style 1. The following questions pertain to Egyptian architecture.",
+  question: "What is the decorative feature of Egyptian architecture?",
+  choices: ["Pylon", "Obelisk", "Hieroglyphs", "Sphinx"],
+  correct: "Hieroglyphs"
+},
+{
+  situation: "SITUATION 02 – The following questions pertain to Topic 02: Historic Style 1. The following questions pertain to Egyptian architecture.",
+  question: "Which architectural style uses the gorge cornice moulding?",
+  choices: ["Egyptian Architecture", "Roman Architecture", "Baroque Architecture", "Rococo Architecture"],
+  correct: "Egyptian Architecture"
+},
+{
+  situation: "SITUATION 02 – The following questions pertain to Topic 02: Historic Style 1.",
+  question: "Which architectural style uses terra cotta, marble, and concrete?",
+  choices: ["Roman", "Greek", "Early Christian", "Byzantine"],
+  correct: "Roman"
+},
+{
+  situation: "SITUATION 02 – The following questions pertain to Topic 02: Historic Style 1.",
+  question: "Which architectural style uses ashlar and concrete stone?",
+  choices: ["Roman", "Greek", "Early Christian", "Byzantine"],
+  correct: "Roman"
+},
+{
+  situation: "SITUATION 02 – The following questions pertain to Topic 02: Historic Style 1.",
+  question: "Which architectural style uses marble, concrete, bricks, and other materials?",
+  choices: ["Roman", "Greek", "Early Christian", "Byzantine"],
+  correct: "Roman"
+},
+{
+  situation: "SITUATION 02 – The following questions pertain to Topic 02: Historic Style 1.",
+  question: "Which architectural style primarily uses marble?",
+  choices: ["Roman", "Greek", "Early Christian", "Byzantine"],
+  correct: "Greek"
+},
+{
+  situation: "SITUATION 02 – The following questions pertain to Topic 02: Historic Style 1.",
+  question: "Which architectural style is known for the use of mosaics, domes, and rich ornamentation?",
+  choices: ["Roman", "Greek", "Early Christian", "Byzantine"],
+  correct: "Byzantine"
+},
+{
+  situation: "SITUATION 02 – The following questions pertain to Topic 02: Historic Style 1.",
+  question: "The Greeks' beliefs are based on what?",
+  choices: ["Natural phenomena", "Christianity", "Ancestor worship", "Life after death"],
+  correct: "Natural phenomena"
+},
+{
+  situation: "SITUATION 02 – The following questions pertain to Topic 02: Historic Style 1.",
+  question: "What religious belief were Roman buildings based on?",
+  choices: ["Natural phenomena", "Christianity", "Ancestor worship", "Life after death"],
+  correct: "Ancestor worship"
+},
+{
+  situation: "SITUATION 02 – The following questions pertain to Topic 02: Historic Style 1.",
+  question: "What religious belief was most influential in Early Christian architecture?",
+  choices: ["Polytheism", "Ancestor worship", "Life after death", "Monotheism"],
+  correct: "Monotheism"
+},
+{
+  situation: "SITUATION 02 – The following questions pertain to Topic 02: Historic Style 1.",
+  question: "Which Egyptian tomb usually serves as the main building of a complex, surrounded by enclosed walls?",
+  choices: ["Mastaba", "Pyramid", "Rock Hewn", "Ziggurat"],
+  correct: "Pyramid"
+},
+{
+  situation: "SITUATION 02 – The following questions pertain to Topic 02: Historic Style 1.",
+  question: "Which tomb of nobility features porticoes at the front and an offering chapel behind?",
+  choices: ["Mastaba", "Pyramid", "Rock Hewn", "Ziggurat"],
+  correct: "Mastaba"
+},
+{
+  situation: "SITUATION 02 – The following questions pertain to Topic 02: Historic Style 1. The following questions pertain to Egyptian architecture.",
+  question: "Which of the following is a cult temple?",
+  choices: ["Amun, Karnak", "Luxor, Thebes", "Temple of Hatshepsut", "Ramesseum, Thebes"],
+  correct: "Amun, Karnak"
+},
+{
+  situation: "SITUATION 02 – The following questions pertain to Topic 02: Historic Style 1. The following questions pertain to Egyptian architecture.",
+  question: "Which of the following is a mortuary temple?",
+  choices: ["Amun, Karnak", "Luxor, Thebes", "Temple of Hathor, Dendera", "Temple of Isis, Philae"],
+  correct: "Temple of Isis, Philae"
+},
+{
+  situation: "SITUATION 02 – The following questions pertain to Topic 02: Historic Style 1. The following questions pertain to Egyptian architecture.",
+  question: "Which temple is dedicated to Queen Hatshepsut and built into a cliff face?",
+  choices: ["Temple of Horus, Edfu", "Temple of Hatshepsut", "Temple of Amun, Karnak", "Temple of Seti I, Abydos"],
+  correct: "Temple of Hatshepsut"
+},
+{
+  situation: "SITUATION 02 – The following questions pertain to Topic 02: Historic Style 1. The following questions pertain to Egyptian architecture.",
+  question: "Which temple is known for its hypostyle hall with 134 massive columns?",
+  choices: ["Temple of Horus, Edfu", "Temple of Isis, Philae", "Temple of Amun, Karnak", "Temple of Kom Ombo"],
+  correct: "Temple of Amun, Karnak"
+},
+{
+  situation: "SITUATION 02 – The following questions pertain to Topic 02: Historic Style 1. The following questions pertain to Egyptian architecture.",
+  question: "Which temple is located on an island and dedicated to the goddess of magic and motherhood?",
+  choices: ["Temple of Amun, Karnak", "Temple of Isis, Philae", "Temple of Seti I, Abydos", "Temple of Hatshepsut"],
+  correct: "Temple of Isis, Philae"
+},
+{
+  situation: "SITUATION 02 – The following questions pertain to Topic 02: Historic Style 1.",
+  question: "What are the architectural orders developed in ancient Greek architecture?",
+  choices: ["Doric, Ionic, and Corinthian", "Tuscan, Composite, and Corinthian", "Baroque, Gothic, and Classical", "Volute, Pediment, and Stylobate"],
+  correct: "Doric, Ionic, and Corinthian"
+},
+{
+  situation: "SITUATION 02 – The following questions pertain to Topic 02: Historic Style 1.",
+  question: "Which classical orders were developed by the Romans?",
+  choices: ["Doric and Ionic", "Tuscan and Composite", "Corinthian and Gothic", "Baroque and Rococo"],
+  correct: "Tuscan and Composite"
+},
+{
+  situation: "SITUATION 02 – The following questions pertain to Topic 02: Historic Style 1.",
+  question: "What do you call a capital that combines the volutes of the Ionic order with the acanthus leaves of the Corinthian order?",
+  choices: ["Doric capital", "Tuscan capital", "Ionic capital", "Composite capital"],
+  correct: "Composite capital"
+},
+{
+  situation: "SITUATION 02 – The following questions pertain to Topic 02: Historic Style 1.",
+  question: "Which ancient architecture is known for its tall, slender columns with distinctive capitals?",
+  choices: ["Persian", "Egyptian", "Greek", "Byzantine"],
+  correct: "Greek"
+},
+{
+  situation: "SITUATION 02 – The following questions pertain to Topic 02: Historic Style 1.",
+  question: "Who was the architect of the Parthenon?",
+  choices: ["Iktinos", "Callicrates", "Phidias", "Pericles"],
+  correct: "Iktinos"
+},
+{
+  situation: "SITUATION 02 – The following questions pertain to Topic 02: Historic Style 1.",
+  question: "What are the geographic characteristics of Greece?",
+  choices: ["Flat terrain", "Rainforests and plains", "Desert and sand dunes", "Mountainous and surrounded by seas"],
+  correct: "Mountainous and surrounded by seas"
+},
+{
+  situation: "SITUATION 02 – The following questions pertain to Topic 02: Historic Style 1.",
+  question: "What religious beliefs influenced Greek architecture?",
+  choices: ["Christianity", "Islamic rituals", "Natural phenomena", "Ancestor worship"],
+  correct: "Natural phenomena"
+},
+{
+  situation: "SITUATION 02 – The following questions pertain to Topic 02: Historic Style 1.",
+  question: "What factors influenced the design of Greek buildings?",
+  choices: ["Political hierarchy", "Agricultural economy", "Military conquest", "Religious festivals, fine arts, and music"],
+  correct: "Religious festivals, fine arts, and music"
+},
+{
+  situation: "SITUATION 02 – The following questions pertain to Topic 02: Historic Style 1.",
+  question: "What is the climate of Greece?",
+  choices: ["Hot and dry climate", "Cold and damp", "Temperate with heavy rain", "Humid and tropical"],
+  correct: "Hot and dry climate"
+},
+{
+  situation: "SITUATION 02 – The following questions pertain to Topic 02: Historic Style 1.",
+  question: "What were the major building materials used in ancient Greek architecture?",
+  choices: ["Mud bricks", "Marble", "Granite", "Terracotta"],
+  correct: "Marble"
+},
+{
+  situation: "SITUATION 02 – The following questions pertain to Topic 02: Historic Style 1.",
+  question: "What is the structural system used in ancient Egyptian architecture?",
+  choices: ["Columnar and squared", "Columnar and round", "Columnar and trabeated", "Columnar and lintel"],
+  correct: "Columnar and trabeated"
+},
+{
+  situation: "SITUATION 02 – The following questions pertain to Topic 02: Historic Style 1.",
+  question: "Which style is characterized by battered walls, no windows, and gorge mouldings?",
+  choices: ["Egyptian", "Roman", "Greek", "Gothic"],
+  correct: "Egyptian"
+},
+{
+  situation: "SITUATION 02 – The following questions pertain to Topic 02: Historic Style 1.",
+  question: "Which civilization built structures on platforms 6 to 10 meters high, with a conical shape and pipe holes?",
+  choices: ["West Asiatic", "Pre-Columbian", "Minoan", "Romanesque"],
+  correct: "West Asiatic"
+},
+{
+  situation: "SITUATION 02 – The following questions pertain to Topic 02: Historic Style 1.",
+  question: "What type of column is characterized by a lotus or papyrus capital, commonly found in Egyptian architecture?",
+  choices: ["Lotiform column", "Campaniform column", "Palmiform column", "Bell-shaped column"],
+  correct: "Lotiform column"
+},
+{
+  situation: "SITUATION 02 – The following questions pertain to Topic 02: Historic Style 1.",
+  question: "What is the term for the large hall in Egyptian temples filled with columns, often representing a papyrus forest?",
+  choices: ["Hypostyle hall", "Peristyle court", "Sanctuary", "Nave"],
+  correct: "Hypostyle hall"
+},
+{
+  situation: "SITUATION 02 – The following questions pertain to Topic 02: Historic Style 1.",
+  question: "Which Roman building contains the largest unsupported dome in the world?",
+  choices: ["St. Peter's Basilica", "Parthenon", "Pantheon", "Basilica of San Vitale"],
+  correct: "Pantheon"
+},
+{
+  situation: "SITUATION 02 – The following questions pertain to Topic 02: Historic Style 1.",
+  question: "What is the largest surviving triumphal arch, completed in 315 AD?",
+  choices: ["Arch of Constantine", "Arch of Septimius Severus", "Arch of Titus", "Arc de Triomphe"],
+  correct: "Arch of Constantine"
+},
+{
+  situation: "SITUATION 02 – The following questions pertain to Topic 02: Historic Style 1.",
+  question: "Which is the largest of the Roman hippodromes and one of the largest sports arenas ever built?",
+  choices: ["Olympia Stadium", "Hippodrome of Constantinople", "Circus Maximus", "The Colosseum"],
+  correct: "Circus Maximus"
+},
+{
+  situation: "SITUATION 02 – The following questions pertain to Topic 02: Historic Style 1.",
+  question: "Who began the construction of the Great Hypostyle Hall in the Temple of Karnak?",
+  choices: ["Amenhotep III", "Seti I", "Ramesses II", "Horemheb"],
+  correct: "Seti I"
+},
+{
+  situation: "SITUATION 02 – The following questions pertain to Topic 02: Historic Style 1.",
+  question: "What was the primary function of the aqueducts designed by the Romans?",
+  choices: ["Water distribution", "Act as monument", "Fish farming", "Electricity"],
+  correct: "Water distribution"
+},
+{
+  situation: "SITUATION 02 – The following questions pertain to Topic 02: Historic Style 1.",
+  question: "What technique did the Egyptians use to create a perfectly level base for the pyramids?",
+  choices: [
+    "Level tool",
+    "Dug a trench around the building site and filled it with water",
+    "Ancient tool equivalent to a carpenter's level",
+    "Flood the site with water"
+  ],
+  correct: "Dug a trench around the building site and filled it with water"
+},
+{
+  situation: "SITUATION 02 – The following questions pertain to Topic 02: Historic Style 1.",
+  question: "What method was used to transfer 2-ton stones during the construction of the pyramids?",
+  choices: [
+    "Used cranes",
+    "Lifted them one by one on top of the other",
+    "Used rolled logs to move and position them",
+    "None of the above"
+  ],
+  correct: "Used rolled logs to move and position them"
+},
+{
+  situation: "SITUATION 02 – The following questions pertain to Topic 02: Historic Style 1.",
+  question: "Who was the chief architect of the Great Pyramid of Giza?",
+  choices: ["Hemiunu", "Imhotep", "Djoser", "Khufu"],
+  correct: "Hemiunu"
+},
+{
+  situation: "SITUATION 02 – The following questions pertain to Topic 02: Historic Style 1.",
+  question: "What is the name of the ancient stone figure with the body of a lion and the head of a human?",
+  choices: ["Sphinx", "Djinn", "Uktena", "Obelisk"],
+  correct: "Sphinx"
+},
+{
+  situation: "SITUATION 02 – The following questions pertain to Topic 02: Historic Style 1.",
+  question: "Who was the architect of the Pyramid of Zoser?",
+  choices: ["Imhotep", "Rameses", "Cheops", "Rameses III"],
+  correct: "Imhotep"
+},
+{
+  situation: "SITUATION 02 – The following questions pertain to Topic 02: Historic Style 1.",
+  question: "Which architect was deified and honored during the reign of Rameses?",
+  choices: ["Imhotep", "Senenmut", "Amenhotep", "Rameses II"],
+  correct: "Imhotep"
+},
+{
+  situation: "SITUATION 02 – The following questions pertain to Topic 02: Historic Style 1.",
+  question: "What is the name of the sacred lake commonly found in Egyptian temples used for ritual purification?",
+  choices: ["Solar Basin", "Lotus Pool", "Sacred Lake", "Temple Reservoir"],
+  correct: "Sacred Lake"
+},
+{
+  situation: "SITUATION 02 – The following questions pertain to Topic 02: Historic Style 1.",
+  question: "What structure served as the gateway to Egyptian temples, often decorated with carvings and flanked by obelisks?",
+  choices: ["Pylon", "Hypostyle Hall", "Sanctuary", "Peristyle"],
+  correct: "Pylon"
+},
+{
+  situation: "SITUATION 02 – The following questions pertain to Topic 02: Historic Style 1.",
+  question: "What is the tall, four-sided, tapering monument used by Egyptians as a symbol of the sun god Ra?",
+  choices: ["Ziggurat", "Cenotaph", "Stele", "Obelisk"],
+  correct: "Obelisk"
+},
+{
+  situation: "SITUATION 02 – The following questions pertain to Topic 02: Historic Style 1.",
+  question: "What was the architectural prototype of the Egyptian pyramid?",
+  choices: ["Menhir", "Dolmen", "Mastaba", "Stepped pyramid"],
+  correct: "Mastaba"
+},
+{
+  situation: "SITUATION 02 – The following questions pertain to Topic 02: Historic Style 1.",
+  question: "What is opus tessellatum in Roman architecture?",
+  choices: ["Brick layout", "Mosaic", "Mural", "Collage"],
+  correct: "Mosaic"
+},
+{
+  situation: "SITUATION 02 – The following questions pertain to Topic 02: Historic Style 1.",
+  question: "What type of Roman wall facing creates a net-like pattern?",
+  choices: ["Opus testaceum", "Opus quadratum", "Opus reticulatum", "Opus mixtum"],
+  correct: "Opus reticulatum"
+},
+{
+  situation: "SITUATION 02 – The following questions pertain to Topic 02: Historic Style 1.",
+  question: "What is the warm room in an ancient Roman bath?",
+  choices: ["Sudatorium", "Tepidarium", "Caldarium", "Laconicum"],
+  correct: "Tepidarium"
+},
+{
+  situation: "SITUATION 02 – The following questions pertain to Topic 02: Historic Style 1.",
+  question: "What is the sweating room in an ancient Roman bath?",
+  choices: ["Sudarium", "Frigidarium", "Tepidarium", "Caldarium"],
+  correct: "Caldarium"
+},
+{
+  situation: "SITUATION 02 – The following questions pertain to Topic 02: Historic Style 1.",
+  question: "What is the name of the bedroom in an ancient Roman domus?",
+  choices: ["Atrium", "Vestibulum", "Cubicula", "Tabernae"],
+  correct: "Cubicula"
+},
+{
+  situation: "SITUATION 02 – The following questions pertain to Topic 02: Historic Style 1.",
+  question: "What is the triangular structure on top of an entablature?",
+  choices: ["Base", "Shaft", "Pediment", "Architrave"],
+  correct: "Pediment"
+},
+{
+  situation: "SITUATION 02 – The following questions pertain to Topic 02: Historic Style 1.",
+  question: "Where is the pediment located in a Doric temple?",
+  choices: [
+    "Placed below the entablature",
+    "Placed above the entablature",
+    "Rests beneath the architrave",
+    "It is part of the base"
+  ],
+  correct: "Placed above the entablature"
+},
+{
+  situation: "SITUATION 02 – The following questions pertain to Topic 02: Historic Style 1.",
+  question: "What is the purpose of the pediment in a Classical Greek temple?",
+  choices: [
+    "Used as mouldings for framing a door, window, or other rectangular opening",
+    "It consists of the tympanum, often decorated with sculpture depicting scenes from Greek and Roman mythology or allegorical figures",
+    "Serves as the base for the column",
+    "All of the above"
+  ],
+  correct: "It consists of the tympanum, often decorated with sculpture depicting scenes from Greek and Roman mythology or allegorical figures"
+},
+{
+  situation: "SITUATION 02 – The following questions pertain to Topic 02: Historic Style 1.",
+  question: "What do you call a wide, low-pitched gable surmounting a colonnade or a major division of a façade?",
+  choices: ["Tympanum", "Pediment", "Stylobate", "Acroterium"],
+  correct: "Pediment"
+},
+{
+  situation: "SITUATION 02 – The following questions pertain to Topic 02: Historic Style 1.",
+  question: "In Greek architecture, what is another term for Cella?",
+  choices: ["Pronaos", "Naos", "Epinaos", "Opisthodomos"],
+  correct: "Naos"
+},
+{
+  situation: "SITUATION 02 – The following questions pertain to Topic 02: Historic Style 1.",
+  question: "What structure was known in the Classical World as the Treasury of Atreus?",
+  choices: ["Tomb of Kings", "Tomb of Agamemnon", "Tomb of the Gods", "Tomb of Slaves"],
+  correct: "Tomb of Agamemnon"
+},
+{
+  situation: "SITUATION 02 – The following questions pertain to Topic 02: Historic Style 1.",
+  question: "Who was the architect of the Temple of Zeus Olympius at Agrigentum?",
+  choices: ["Antistates", "Porinus", "Libon", "Theron"],
+  correct: "Porinus"
+},
+{
+  situation: "SITUATION 02 – The following questions pertain to Topic 02: Historic Style 1.",
+  question: "Where was the Agora built?",
+  choices: ["Greece", "Rome", "India", "Babylonia"],
+  correct: "Greece"
+},
+{
+  situation: "SITUATION 02 – The following questions pertain to Topic 02: Historic Style 1.",
+  question: "What was the long colonnaded building during Greek times?",
+  choices: ["Stoa", "Thermae", "Narthex", "Forum"],
+  correct: "Stoa"
+},
+{
+  situation: "SITUATION 02 – The following questions pertain to Topic 02: Historic Style 1.",
+  question: "What do you call a structure that is open and colonnaded at the entrance, often extending a considerable distance, and commonly used as a meeting place around public areas?",
+  choices: ["Peristyle", "Stoa", "Agora", "Acroterium"],
+  correct: "Stoa"
+},
+{
+  situation: "SITUATION 02 – The following questions pertain to Topic 02: Historic Style 1.",
+  question: "Who was a Roman architect and engineer during the 1st century BC?",
+  choices: ["Leonardo da Vinci", "Apollodorus of Damascus", "Vitruvius", "Isidore of Miletus"],
+  correct: "Vitruvius"
+},
+{
+  situation: "SITUATION 02 – The following questions pertain to Topic 02: Historic Style 1.",
+  question: "What was the main purpose of the Roman Colosseum?",
+  choices: [
+    "Entertainment for ancient Romans",
+    "To create a humble structure",
+    "To test Roman engineering",
+    "All of the above"
+  ],
+  correct: "All of the above"
+},
+{
+  situation: "SITUATION 02 – The following questions pertain to Topic 02: Historic Style 1.",
+  question: "What is the effect of using a rib vault in architecture?",
+  choices: ["Additional walls", "Additional windows", "Additional floors", "Additional space"],
+  correct: "Additional space"
+},
+{
+  situation: "SITUATION 02 – The following questions pertain to Topic 02: Historic Style 1.",
+  question: "Which temple features a circular plan supporting a dome approximately 140 feet in diameter and was once described by Thomas Jefferson as a model of the spherical arch?",
+  choices: ["St. Peter's Basilica", "Hagia Sophia", "Pantheon", "Parthenon"],
+  correct: "Pantheon"
+},
+{
+  situation: "SITUATION 02 – The following questions pertain to Topic 02: Historic Style 1.",
+  question: "What is the total height of the Pantheon in Rome?",
+  choices: ["45 feet", "46 feet", "44 feet", "47 feet"],
+  correct: "44 feet"
+},
+{
+  situation: "SITUATION 02 – The following questions pertain to Topic 02: Historic Style 1.",
+  question: "What is the name of the Egyptian structure located in the ancient city of Thebes, known for its grand colonnades and obelisks?",
+  choices: ["Temple of Lux", "Temple of Luxor", "Mastaba of Lux", "Mastaba of Luxor"],
+  correct: "Temple of Luxor"
+},
+{
+  situation: "SITUATION 02 – The following questions pertain to Topic 02: Historic Style 1.",
+  question: "What material was primarily used in the construction of the Temple of Luxor?",
+  choices: ["Limestone", "Marble", "Sandstone", "Adobe"],
+  correct: "Sandstone"
+},
+{
+  situation: "SITUATION 02 – The following questions pertain to Topic 02: Historic Style 1.",
+  question: "The Temple of Luxor is not dedicated to a cult god. Instead, it is dedicated to what purpose?",
+  choices: [
+    "Rejuvenation of kings",
+    "Triumph of pharaohs",
+    "Marriage of kings",
+    "Festival of kings"
+  ],
+  correct: "Rejuvenation of kings"
+},
+{
+  situation: "SITUATION 02 – The following questions pertain to Topic 02: Historic Style 1.",
+  question: "What construction system was employed in the construction of the Parthenon?",
+  choices: ["Trabeated", "Post and lintel", "Columns and beams", "Conventional"],
+  correct: "Trabeated"
+},
+{
+  situation: "SITUATION 02 – The following questions pertain to Topic 02: Historic Style 1.",
+  question: "What classical order of columns was used in the Parthenon?",
+  choices: ["Corinthian order", "Ionic order", "Doric order", "Tuscan order"],
+  correct: "Doric order"
+},
+{
+  situation: "SITUATION 03 – The following questions pertain to Topic 03: Historic Style 2.",
+  question: "What is the name of Figure A?",
+  choices: ["Arch of Constantine", "Arch of Titus", "Arch of Septimius Severus", "None of the above"],
+  correct: "Arch of Constantine",
+  image: "figure3A.png"
+},
+{
+  situation: "SITUATION 03 – The following questions pertain to Topic 03: Historic Style 2.",
+  question: "What is the name of Figure B?",
+  choices: ["Temple of Nike", "Temple of Zeus", "Erectheion", "Parthenon"],
+  correct: "Parthenon",
+  image: "figure3A.png"
+},
+{
+  situation: "SITUATION 03 – The following questions pertain to Topic 03: Historic Style 2.",
+  question: "What is the name of Figure C?",
+  choices: ["Temple of Augustus", "Pantheon", "Maisson Carree", "Temple of Saturn"],
+  correct: "Pantheon",
+  image: "figure3A.png"
+},
+{
+  situation: "SITUATION 03 – The following questions pertain to Topic 03: Historic Style 2.",
+  question: "What is the name of Figure D?",
+  choices: ["Circus of Nero", "Circus Maxentius", "Circus Maximus", "Circus Flaminius"],
+  correct: "Circus Maximus",
+  image: "figure3A.png"
+},
+{
+  situation: "SITUATION 03 – The following questions pertain to Topic 03: Historic Style 2.",
+  question: "What is the name of Figure E?",
+  choices: ["Temple of Nike", "Temple of Zeus", "Erectheion", "Parthenon"],
+  correct: "Erectheion",
+  image: "figure3A.png"
+},
+{
+  situation: "SITUATION 03 – The following questions pertain to Topic 03: Historic Style 2.",
+  question: "What is the usual wall characteristic of Romanesque architecture?",
+  choices: [
+    "Massive and heavy walls",
+    "Decorative imposing block walls",
+    "Walls are supported",
+    "Brick walls filled with thick mortar"
+  ],
+  correct: "Massive and heavy walls"
+},
+{
+  situation: "SITUATION 03 – The following questions pertain to Topic 03: Historic Style 2.",
+  question: "What is the usual arch design of Romanesque architecture?",
+  choices: ["Pointed", "Semi-circular", "Circular", "Truncated"],
+  correct: "Semi-circular"
+},
+{
+  situation: "SITUATION 03 – The following questions pertain to Topic 03: Historic Style 2.",
+  question: "What is the usual buttress design in Romanesque architecture?",
+  choices: [
+    "Angled buttresses",
+    "Flying buttresses",
+    "Flat square buttresses",
+    "Rib profile buttresses"
+  ],
+  correct: "Flat square buttresses"
+},
+{
+  situation: "SITUATION 03 – The following questions pertain to Topic 03: Historic Style 2.",
+  question: "What is the usual window characteristic of Romanesque architecture?",
+  choices: [
+    "Few but large openings",
+    "Many and large openings",
+    "Few and small openings",
+    "Many but small openings"
+  ],
+  correct: "Few and small openings"
+},
+{
+  situation: "SITUATION 03 – The following questions pertain to Topic 03: Historic Style 2.",
+  question: "Cathedral churches in the Romanesque style of architecture generally follow the",
+  choices: ["Octagonal", "Latin cross", "Greek cross", "Polygonal plan"],
+  correct: "Latin cross"
+},
+{
+  situation: "SITUATION 03 – The following questions pertain to Topic 03: Historic Style 2.",
+  question: "What is the most spectacular example of Byzantine church architecture built in 532 AD?",
+  choices: [
+    "Hagia Sophia",
+    "Basilica of Sant' Apollinare Nuovo",
+    "Basilica of San Vitale",
+    "Church of Saint Catherine"
+  ],
+  correct: "Hagia Sophia"
+},
+{
+  situation: "SITUATION 03 – The following questions pertain to Topic 03: Historic Style 2.",
+  question: "What is the modern name of Byzantium, which was the capital of the Eastern Roman Empire?",
+  choices: ["Macedonia", "Istanbul", "Kiev", "Georgia"],
+  correct: "Istanbul"
+},
+{
+  situation: "SITUATION 03 – The following questions pertain to Topic 03: Historic Style 2.",
+  question: "What is the distinct style of Byzantine church architecture?",
+  choices: [
+    "Greek cross plan and dome roof",
+    "Flying buttress",
+    "Pointed arches and vaults",
+    "Orthodox dome and rectangular plan"
+  ],
+  correct: "Greek cross plan and dome roof"
+},
+{
+  situation: "SITUATION 03 – The following questions pertain to Topic 03: Historic Style 2.",
+  question: "Which was the first church built in Constantinople and defined by its large atrium?",
+  choices: ["Hagia Irene", "St. Mark Basilica", "Church of Saint George", "Hagia Sophia"],
+  correct: "Hagia Irene"
+},
+{
+  situation: "SITUATION 03 – The following questions pertain to Topic 03: Historic Style 2.",
+  question: "What was fully developed by Byzantine architects wherein a triangular segment of a spherical surface is formed over an enclosed square to support a dome?",
+  choices: ["Squinch", "Colonnettes", "Pendentive", "Vault"],
+  correct: "Pendentive"
+},
+{
+  situation: "SITUATION 03 – The following questions pertain to Topic 03: Historic Style 2.",
+  question: "The Leaning Tower of Pisa is known by its Italian name as",
+  choices: [
+    "Torre Pisa",
+    "Torre Pendente di Pisa",
+    "Torre la Pisa",
+    "Leniente de Pisa"
+  ],
+  correct: "Torre Pendente di Pisa"
+},
+{
+  situation: "SITUATION 03 – The following questions pertain to Topic 03: Historic Style 2.",
+  question: "Who was the architect?",
+  choices: ["Bonanno Pisano", "Bramante", "Bon de Lara", "Bonito Turene"],
+  correct: "Bonanno Pisano"
+},
+{
+  situation: "SITUATION 03 – The following questions pertain to Topic 03: Historic Style 2.",
+  question: "What is its architectural style?",
+  choices: [
+    "Romanesque",
+    "Italian Romanesque",
+    "Pisan architecture",
+    "Italian Gothic"
+  ],
+  correct: "Pisan architecture"
+},
+{
+  situation: "SITUATION 03 – The following questions pertain to Topic 03: Historic Style 2.",
+  question: "When was the construction completed?",
+  choices: ["1370", "1371", "1372", "1373"],
+  correct: "1372"
+},
+{
+  situation: "SITUATION 03 – The following questions pertain to Topic 03: Historic Style 2.",
+  question: "What is the height of the tower?",
+  choices: ["183.33 ft", "184.33 ft", "185.23 ft", "186.43 ft"],
+  correct: "184.33 ft"
+},
+{
+  situation: "SITUATION 03 – The following questions pertain to Topic 03: Historic Style 2.",
+  question: "Characteristic of a Gothic bell tower?",
+  choices: ["Separated", "No bell tower", "Tall", "Short"],
+  correct: "Tall"
+},
+{
+  situation: "SITUATION 03 – The following questions pertain to Topic 03: Historic Style 2.",
+  question: "What is the usual shape of a Gothic arch?",
+  choices: ["Flat", "Semi circular", "Pointed", "Circular"],
+  correct: "Pointed"
+},
+{
+  situation: "SITUATION 03 – The following questions pertain to Topic 03: Historic Style 2.",
+  question: "Characteristic of a Gothic church interior?",
+  choices: ["Light and airy", "Dark", "Barbaric", "Eclectic"],
+  correct: "Light and airy"
+},
+{
+  situation: "SITUATION 03 – The following questions pertain to Topic 03: Historic Style 2.",
+  question: "Characteristic of Gothic buttress?",
+  choices: ["Flat", "Flying", "Flushed", "No buttress"],
+  correct: "Flying"
+},
+{
+  situation: "SITUATION 03 – The following questions pertain to Topic 03: Historic Style 2.",
+  question: "What period did Gothic architecture flourish?",
+  choices: ["1240–1400", "1140–1400", "1440–1600", "1410–1500"],
+  correct: "1140–1400"
+},
+{
+  situation: "SITUATION 03 – The following questions pertain to Topic 03: Historic Style 2.",
+  question: "What supports the dome in a Byzantine church?",
+  choices: ["Base", "Plinth", "Zocalo", "Pendentive"],
+  correct: "Pendentive"
+},
+{
+  situation: "SITUATION 03 – The following questions pertain to Topic 03: Historic Style 2.",
+  question: "It is the first Christian church built in Constantinople, by Roman Emperor Constantine I.",
+  choices: ["Hagia Sophia", "Hagia Irene", "Hagia Theodosia", "Basilica of San Vitale"],
+  correct: "Hagia Irene"
+},
+{
+  situation: "SITUATION 03 – The following questions pertain to Topic 03: Historic Style 2.",
+  question: "The original exterior color of this church was white. In present day, its exterior developed to a colorful one.",
+  choices: ["Hagia Sophia", "St. Basil's Cathedral", "Hagia Theodosia", "Basilica of San Vitale"],
+  correct: "St. Basil's Cathedral"
+},
+{
+  situation: "SITUATION 03 – The following questions pertain to Topic 03: Historic Style 2.",
+  question: "Characteristic of Byzantine architecture.",
+  choices: ["Square plan", "Greek cross plan", "Without domes", "Flying buttress"],
+  correct: "Greek cross plan"
+},
+{
+  situation: "SITUATION 03 – The following questions pertain to Topic 03: Historic Style 2.",
+  question: "What period did Byzantine architecture flourish?",
+  choices: [
+    "Between A.D. 627 and 665",
+    "Between A.D. 527 and 565",
+    "Between A.D. 427 and 465",
+    "Between A.D. 827 and 865"
+  ],
+  correct: "Between A.D. 527 and 565"
+},
+{
+  situation: "SITUATION 03 – The following questions pertain to Topic 03: Historic Style 2.",
+  question: "What architectural style is characterized by long pointed arches?",
+  choices: ["Gothic", "Romanesque", "Renaissance", "Roman"],
+  correct: "Gothic"
+},
+{
+  situation: "SITUATION 03 – The following questions pertain to Topic 03: Historic Style 2.",
+  question: "What architectural style is characterized by a reintroduction of classical elements?",
+  choices: ["Gothic", "Romanesque", "Renaissance", "Roman"],
+  correct: "Renaissance"
+},
+{
+  situation: "SITUATION 03 – The following questions pertain to Topic 03: Historic Style 2.",
+  question: "What architectural style is characterized by ornamented arcades, walls, windows, and arches?",
+  choices: ["Gothic", "Romanesque", "Renaissance", "Roman"],
+  correct: "Gothic"
+},
+{
+  situation: "SITUATION 03 – The following questions pertain to Topic 03: Historic Style 2.",
+  question: "What architectural style is characterized by rock-like structures and crimped shells put together to create a lavish look?",
+  choices: ["Rococo", "Baroque", "Romanesque", "Renaissance"],
+  correct: "Baroque"
+},
+{
+  situation: "SITUATION 03 – The following questions pertain to Topic 03: Historic Style 2.",
+  question: "What architectural style is characterized by a rich, wild, and full ornamental expression?",
+  choices: ["Rococo", "Baroque", "Romanesque", "Renaissance"],
+  correct: "Rococo"
+},
+{
+  situation: "SITUATION 03 – The following questions pertain to Topic 03: Historic Style 2.",
+  question: "Which church has the loftiest vaulting or highest vaulted ceiling?",
+  choices: ["Amiens", "Chartres", "Beauvais", "Reims"],
+  correct: "Beauvais"
+},
+{
+  situation: "SITUATION 03 – The following questions pertain to Topic 03: Historic Style 2.",
+  question: "Which church is known as a famous pilgrimage site?",
+  choices: ["Amiens", "Chartres", "Beauvais", "Reims"],
+  correct: "Chartres"
+},
+{
+  situation: "SITUATION 03 – The following questions pertain to Topic 03: Historic Style 2.",
+  question: "Which cathedral is famously known for its stunning rose windows?",
+  choices: ["Amiens", "Chartres", "Beauvais", "Reims"],
+  correct: "Chartres"
+},
+{
+  situation: "SITUATION 03 – The following questions pertain to Topic 03: Historic Style 2.",
+  question: "Which Gothic cathedral in France is known for having never been completed due to structural collapse?",
+  choices: ["Amiens", "Chartres", "Beauvais", "Reims"],
+  correct: "Beauvais"
+},
+{
+  situation: "SITUATION 03 – The following questions pertain to Topic 03: Historic Style 2.",
+  question: "Which Gothic cathedral is considered the coronation site of French kings?",
+  choices: ["Amiens", "Chartres", "Beauvais", "Reims"],
+  correct: "Reims"
+},
+{
+  situation: "SITUATION 03 – The following questions pertain to Topic 03: Historic Style 2.",
+  question: "What is the defining characteristic of Gothic architecture?",
+  choices: [
+    "Pointed arches and ornate decorations",
+    "Domes",
+    "Basilican plan",
+    "Semi-circular arches"
+  ],
+  correct: "Pointed arches and ornate decorations"
+},
+{
+  situation: "SITUATION 03 – The following questions pertain to Topic 03: Historic Style 2.",
+  question: "Which of the following is true about Gothic architecture?",
+  choices: [
+    "Ceilings were flat",
+    "Arches were semi-circular",
+    "Church plans were square",
+    "Does not feature domes"
+  ],
+  correct: "Does not feature domes"
+},
+{
+  situation: "SITUATION 03 – The following questions pertain to Topic 03: Historic Style 2.",
+  question: "Flying buttresses were common in which style of architecture?",
+  choices: [
+    "Gothic",
+    "Baroque",
+    "Romanesque",
+    "Renaissance"
+  ],
+  correct: "Gothic"
+},
+{
+  situation: "SITUATION 03 – The following questions pertain to Topic 03: Historic Style 2.",
+  question: "Which style is referred to as the architecture of geometry due to its strong emphasis on proportion and symmetry?",
+  choices: [
+    "Romanesque",
+    "Gothic",
+    "Baroque",
+    "Medieval"
+  ],
+  correct: "Gothic"
+},
+{
+  situation: "SITUATION 03 – The following questions pertain to Topic 03: Historic Style 2.",
+  question: "In architecture, Gothic art was considered the most ___ of its time.",
+  choices: [
+    "Intellectual",
+    "Dominant",
+    "Symmetrical",
+    "Extravagant"
+  ],
+  correct: "Intellectual"
+},
+{
+  situation: "SITUATION 03 – The following questions pertain to Topic 03: Historic Style 2.",
+  question: "In Gothic architecture, which English style is considered closest to the French style?",
+  choices: [
+    "Flamboyant",
+    "Decorated",
+    "Lancet",
+    "Pointed"
+  ],
+  correct: "Lancet"
+},
+{
+  situation: "SITUATION 03 – The following questions pertain to Topic 03: Historic Style 2.",
+  question: "In French Gothic architecture, what was the most commonly used construction material?",
+  choices: [
+    "Sandstone",
+    "Limestone",
+    "Granite stone",
+    "Marble"
+  ],
+  correct: "Limestone"
+},
+{
+  situation: "SITUATION 03 – The following questions pertain to Topic 03: Historic Style 2.",
+  question: "Which description was historically associated with Gothic architecture?",
+  choices: [
+    "Darkness",
+    "Rude and barbaric",
+    "Evil and cruelty",
+    "Black and white"
+  ],
+  correct: "Rude and barbaric"
+},
+{
+  situation: "SITUATION 03 – The following questions pertain to Topic 03: Historic Style 2.",
+  question: "In French, what does L’architecture Ogivale refer to?",
+  choices: [
+    "Gothic architecture",
+    "Roman architecture",
+    "Baroque architecture",
+    "Renaissance architecture"
+  ],
+  correct: "Gothic architecture"
+},
+{
+  situation: "SITUATION 03 – The following questions pertain to Topic 03: Historic Style 2.",
+  question: "Which architectural style is famously known for its use of gargoyles?",
+  choices: [
+    "Baroque",
+    "Gothic",
+    "Renaissance",
+    "Rococo"
+  ],
+  correct: "Gothic"
+},
+{
+  situation: "SITUATION 03 – The following questions pertain to Topic 03: Historic Style 2.",
+  question: "What architectural innovation was introduced in Gothic walls?",
+  choices: [
+    "Stained glass",
+    "More glass",
+    "Clerestory",
+    "Portico"
+  ],
+  correct: "More glass"
+},
+{
+  situation: "SITUATION 03 – The following questions pertain to Topic 03: Historic Style 2.",
+  question: "What architectural feature became possible in Gothic cathedrals due to new structural support methods?",
+  choices: [
+    "Many windows",
+    "Clerestory windows",
+    "Pointed windows",
+    "Nave"
+  ],
+  correct: "Clerestory windows"
+},
+{
+  situation: "SITUATION 03 – The following questions pertain to Topic 03: Historic Style 2.",
+  question: "Which architectural style is known for reaching new vertical heights?",
+  choices: [
+    "Gothic",
+    "Rococo",
+    "Baroque",
+    "Roman"
+  ],
+  correct: "Gothic"
+},
+{
+  situation: "SITUATION 03 – The following questions pertain to Topic 03: Historic Style 2.",
+  question: "What is the term for a continuous row of arches?",
+  choices: [
+    "Triforium",
+    "Colonnade",
+    "Arcade",
+    "Clerestory"
+  ],
+  correct: "Arcade"
+},
+{
+  situation: "SITUATION 03 – The following questions pertain to Topic 03: Historic Style 2.",
+  question: "What do you call the upper part of a wall that contains windows above an adjacent roof?",
+  choices: [
+    "Arcade",
+    "Balustrade",
+    "Entablature",
+    "Clerestory"
+  ],
+  correct: "Clerestory"
+},
+{
+  situation: "SITUATION 03 – The following questions pertain to Topic 03: Historic Style 2.",
+  question: "What is the name of the highly decorated beam developed during the Medieval period and frequently used in English Gothic architecture?",
+  choices: [
+    "Collar beam",
+    "Hammerbeam",
+    "Cross braced",
+    "Tie beam"
+  ],
+  correct: "Hammerbeam"
+},
+{
+  situation: "SITUATION 03 – The following questions pertain to Topic 03: Historic Style 2.",
+  question: "Which cathedral, a destination of pilgrimage dedicated to the Virgin Mary, is known for its three portals on the west front?",
+  choices: [
+    "Chartres Cathedral",
+    "Notre Dame de Paris",
+    "Reims Cathedral",
+    "Amiens Cathedral"
+  ],
+  correct: "Chartres Cathedral"
+},
+{
+  situation: "SITUATION 03 – The following questions pertain to Topic 03: Historic Style 2.",
+  question: "What is the name of the interior gallery that opens onto the tall central space of a building from an upper level?",
+  choices: [
+    "Clerestory",
+    "Apse",
+    "Triforium",
+    "Ambulatory"
+  ],
+  correct: "Triforium"
+},
+{
+  situation: "SITUATION 03 – The following questions pertain to Topic 03: Historic Style 2.",
+  question: "Which building is a splendid example of Early Gothic architecture?",
+  choices: [
+    "St. Paul's Cathedral",
+    "Westminster Abbey",
+    "Notre Dame",
+    "None of the above"
+  ],
+  correct: "Notre Dame"
+},
+{
+  situation: "SITUATION 03 – The following questions pertain to Topic 03: Historic Style 2.",
+  question: "Which cathedral, designed by Christopher Wren, covers an area of 6,000 square meters and features a large central space under a dome for large congregations?",
+  choices: [
+    "St. William's Cathedral",
+    "St. Paul's Cathedral",
+    "St. George Cathedral",
+    "St. Francis Cathedral"
+  ],
+  correct: "St. Paul's Cathedral"
+},
+{
+  situation: "SITUATION 03 – The following questions pertain to Topic 03: Historic Style 2.",
+  question: "Which cathedral features the \"Five Sisters Window\"?",
+  choices: [
+    "Westminster Cathedral",
+    "York Minster Cathedral",
+    "Ulm Minster",
+    "Nin Cathedral"
+  ],
+  correct: "York Minster Cathedral"
+},
+{
+  situation: "SITUATION 03 – The following questions pertain to Topic 03: Historic Style 2.",
+  question: "How many years did it take to build the Notre Dame Cathedral in Paris?",
+  choices: [
+    "148 years",
+    "184 years",
+    "182 years",
+    "168 years"
+  ],
+  correct: "184 years"
+},
+{
+  situation: "SITUATION 03 – The following questions pertain to Topic 03: Historic Style 2.",
+  question: "What is the tallest church in the world as of now?",
+  choices: [
+    "Ulm Minster",
+    "Sagrada Familia",
+    "Westminster Cathedral",
+    "Nin Cathedral"
+  ],
+  correct: "Ulm Minster"
+},
+{
+  situation: "SITUATION 03 – The following questions pertain to Topic 03: Historic Style 2.",
+  question: "Which Gothic cathedral has the longest nave among Gothic churches?",
+  choices: [
+    "Cologne Cathedral",
+    "Chartres Cathedral",
+    "Amiens Cathedral",
+    "Winchester Cathedral"
+  ],
+  correct: "Amiens Cathedral"
+},
+{
+  situation: "SITUATION 03 – The following questions pertain to Topic 03: Historic Style 2.",
+  question: "Which cathedral contains 176 stained glass windows?",
+  choices: [
+    "Sainte-Chapelle",
+    "Reims Cathedral",
+    "Chartres Cathedral",
+    "Notre Dame de Paris"
+  ],
+  correct: "Chartres Cathedral"
+},
+{
+  situation: "SITUATION 03 – The following questions pertain to Topic 03: Historic Style 2.",
+  question: "Which Romanesque cathedral features twin towers, a dome, and apses on both ends?",
+  choices: [
+    "Worms Cathedral",
+    "Pisa Cathedral",
+    "Angoulême Cathedral",
+    "Peterborough Cathedral"
+  ],
+  correct: "Worms Cathedral"
+},
+{
+  situation: "SITUATION 03 – The following questions pertain to Topic 03: Historic Style 2.",
+  question: "Which Italian Renaissance palace is built of brick and features quoining on the corners?",
+  choices: [
+    "Palazzo Medici",
+    "Palazzo Vecchio",
+    "Palace of Farnese",
+    "Palace of Versailles"
+  ],
+  correct: "Palazzo Medici"
+},
+{
+  situation: "SITUATION 03 – The following questions pertain to Topic 03: Historic Style 2.",
+  question: "Which Romanesque baptistery is known for its eight monolithic columns alternating with four pillars and significant vertical height?",
+  choices: [
+    "Florence Baptistery",
+    "Pisa Baptistery",
+    "Siena Baptistery",
+    "Ravenna Baptistery"
+  ],
+  correct: "Florence Baptistery"
+},
+{
+  situation: "SITUATION 03 – The following questions pertain to Topic 03: Historic Style 2.",
+  question: "Which church is considered the most important example of Renaissance architecture?",
+  choices: [
+    "St. Peter’s Basilica",
+    "Santa Maria Novella",
+    "San Lorenzo",
+    "Il Gesù"
+  ],
+  correct: "St. Peter’s Basilica"
+},
+{
+  situation: "SITUATION 03 – The following questions pertain to Topic 03: Historic Style 2.",
+  question: "What is the most influential building of the Byzantine period?",
+  choices: [
+    "Hagia Sophia",
+    "San Vitale",
+    "Hagia Irene",
+    "St. Mark’s Basilica"
+  ],
+  correct: "Hagia Sophia"
+},
+{
+  situation: "SITUATION 03 – The following questions pertain to Topic 03: Historic Style 2.",
+  question: "Which style of architecture emphasizes symmetry, geometry, and the regularity of parts?",
+  choices: [
+    "Romanesque",
+    "Baroque",
+    "Gothic",
+    "Renaissance"
+  ],
+  correct: "Renaissance"
+},
+{
+  situation: "SITUATION 03 – The following questions pertain to Topic 03: Historic Style 2.",
+  question: "Which architectural style adapted the classical orders of columns from the Greeks?",
+  choices: [
+    "Baroque",
+    "Gothic",
+    "Romanesque",
+    "Renaissance"
+  ],
+  correct: "Renaissance"
+},
+{
+  situation: "SITUATION 03 – The following questions pertain to Topic 03: Historic Style 2.",
+  question: "What is considered the birthplace of Italian Renaissance art and architecture?",
+  choices: [
+    "Sicily",
+    "Florence",
+    "Venice",
+    "Rome"
+  ],
+  correct: "Florence"
+},
+{
+  situation: "SITUATION 03 – The following questions pertain to Topic 03: Historic Style 2.",
+  question: "Which period is known as the \"rebirth of the classics\"?",
+  choices: [
+    "Renaissance",
+    "Classical",
+    "Egyptian",
+    "Romanesque"
+  ],
+  correct: "Renaissance"
+},
+{
+  situation: "SITUATION 03 – The following questions pertain to Topic 03: Historic Style 2.",
+  question: "Which villa was designed by Andrea Palladio in the tradition of formal symmetry during the Renaissance period?",
+  choices: [
+    "Villa Santino",
+    "Villa Capra",
+    "Villa Carlota",
+    "Villa Cordoba"
+  ],
+  correct: "Villa Capra"
+},
+{
+  situation: "SITUATION 03 – The following questions pertain to Topic 03: Historic Style 2.",
+  question: "Which Renaissance movement is described as vivid, virile, intense, free, decorative, and illogical?",
+  choices: [
+    "Palladian Architecture",
+    "Proto-Baroque Architecture",
+    "Baroque Architecture",
+    "Rococo Architecture"
+  ],
+  correct: "Baroque Architecture"
+},
+{
+  situation: "SITUATION 03 – The following questions pertain to Topic 03: Historic Style 2.",
+  question: "Which architectural style emerged as a fusion of Romanesque and Byzantine styles in the 12th century?",
+  choices: [
+    "Classical",
+    "Renaissance",
+    "Greek",
+    "Baroque"
+  ],
+  correct: "Baroque"
+},
+{
+  situation: "SITUATION 03 – The following questions pertain to Topic 03: Historic Style 2.",
+  question: "What characterizes the Palladian style of architecture?",
+  choices: [
+    "Ornate and decorative",
+    "Asymmetry",
+    "Unpredictable proportions",
+    "Proportionality"
+  ],
+  correct: "Proportionality"
+},
+{
+  situation: "SITUATION 03 – The following questions pertain to Topic 03: Historic Style 2.",
+  question: "Which of the following is a key characteristic of Renaissance architecture?",
+  choices: [
+    "Emphasis on verticality and flying buttresses",
+    "Use of pointed arches and ribbed vaults",
+    "Application of symmetry, proportion, and classical orders",
+    "Extensive use of irregular forms and ornate facades"
+  ],
+  correct: "Application of symmetry, proportion, and classical orders"
+},
+{
+  situation: "SITUATION 03 – The following questions pertain to Topic 03: Historic Style 2.",
+  question: "What architectural feature was commonly revived during the Renaissance period from Classical antiquity?",
+  choices: [
+    "Horseshoe arches",
+    "Domes and columns",
+    "Gargoyles and grotesques",
+    "Pyramidal spires"
+  ],
+  correct: "Domes and columns"
+},
+{
+  situation: "SITUATION 03 – The following questions pertain to Topic 03: Historic Style 2.",
+  question: "Cologne Cathedral in Germany is considered the longest construction project in history. How many years did it take to complete?",
+  choices: [
+    "630 years",
+    "631 years",
+    "632 years",
+    "633 years"
+  ],
+  correct: "632 years"
+},
+{
+  situation: "SITUATION 03 – The following questions pertain to Topic 03: Historic Style 2.",
+  question: "Which church is known for being a ‘Half Gothic, Half Renaissance’ architectural style?",
+  choices: [
+    "Florence Cathedral",
+    "Granada Cathedral",
+    "Chartres Cathedral",
+    "St. Vitus Cathedral"
+  ],
+  correct: "Florence Cathedral"
+},
+{
+  situation: "SITUATION 03 – The following questions pertain to Topic 03: Historic Style 2.",
+  question: "In which church can the sculpture of the \"Smiling Angel\" be found at the doorway?",
+  choices: [
+    "Amiens Cathedral",
+    "Notre Dame de Paris",
+    "Rouen Cathedral",
+    "Reims Cathedral"
+  ],
+  correct: "Reims Cathedral"
+},
+{
+  situation: "SITUATION 03 – The following questions pertain to Topic 03: Historic Style 2.",
+  question: "Which church is known for having two towers with different designs?",
+  choices: [
+    "Notre Dame de Paris",
+    "Chartres Cathedral",
+    "Cologne Cathedral",
+    "Milan Cathedral"
+  ],
+  correct: "Notre Dame de Paris"
+},
+{
+  situation: "SITUATION 03 – The following questions pertain to Topic 03: Historic Style 2.",
+  question: "Which church features twin towers of the same design but different heights?",
+  choices: [
+    "Chartres Cathedral",
+    "Amiens Cathedral",
+    "Reims Cathedral",
+    "Cologne Cathedral"
+  ],
+  correct: "Reims Cathedral"
+},
+{
+  situation: "SITUATION 03 – The following questions pertain to Topic 03: Historic Style 2.",
+  question: "What is considered the greatest church in all of Christendom?",
+  choices: [
+    "St. Peter's Basilica",
+    "St. William's Cathedral",
+    "St. Mary's Basilica",
+    "St. Andrew's Basilica"
+  ],
+  correct: "St. Peter's Basilica"
+},
+{
+  situation: "SITUATION 03 – The following questions pertain to Topic 03: Historic Style 2.",
+  question: "The proposed Latin Cross plan for St. Peter’s Basilica was originally the idea of which architect?",
+  choices: [
+    "Michelangelo",
+    "Bernini",
+    "Raphael",
+    "Bramante"
+  ],
+  correct: "Bramante"
+},
+{
+  situation: "SITUATION 03 – The following questions pertain to Topic 03: Historic Style 2.",
+  question: "Who was the final architect responsible for completing St. Peter’s Basilica?",
+  choices: [
+    "Michelangelo",
+    "Bernini",
+    "Raphael",
+    "Bramante"
+  ],
+  correct: "Bramante"
+},
+{
+  situation: "SITUATION 03 – The following questions pertain to Topic 03: Historic Style 2.",
+  question: "Who sculpted La Pietà, which is housed inside St. Peter’s Basilica?",
+  choices: [
+    "Michelangelo",
+    "Bernini",
+    "Raphael",
+    "Bramante"
+  ],
+  correct: "Michelangelo"
+},
+{
+  situation: "SITUATION 03 – The following questions pertain to Topic 03: Historic Style 2.",
+  question: "Who designed the entrance piazza of St. Peter’s Basilica, surrounded by 284 Tuscan columns?",
+  choices: [
+    "Fabianne Niclotti",
+    "Michelangelo Buonarroti",
+    "Bramante",
+    "Bernini"
+  ],
+  correct: "Bernini"
+},
+{
+  situation: "SITUATION 03 – The following questions pertain to Topic 03: Historic Style 2.",
+  question: "Which part of St. Peter’s Basilica was designed by Michelangelo?",
+  choices: [
+    "Piazza",
+    "Dome",
+    "Facade",
+    "Portico"
+  ],
+  correct: "Dome"
+},
+{
+  situation: "SITUATION 03 – The following questions pertain to Topic 03: Historic Style 2.",
+  question: "What was Bramante’s contribution to St. Peter’s Basilica?",
+  choices: [
+    "First architect of the main building",
+    "Designed courtyard paving",
+    "Finished the entire church",
+    "Fifth architect of the building"
+  ],
+  correct: "First architect of the main building"
+},
+{
+  situation: "SITUATION 03 – The following questions pertain to Topic 03: Historic Style 2.",
+  question: "Who was responsible for designing the side cupolas (small domes) of St. Peter’s Basilica?",
+  choices: [
+    "Raphael",
+    "Bernini",
+    "Michelangelo",
+    "Vignola"
+  ],
+  correct: "Vignola"
+},
+{
+  situation: "SITUATION 03 – The following questions pertain to Topic 03: Historic Style 2.",
+  question: "Who was responsible for designing the massive façade of St. Peter’s Basilica?",
+  choices: [
+    "Giacomo della Porta",
+    "Donato Bramante",
+    "Michelangelo",
+    "Carlo Maderno"
+  ],
+  correct: "Carlo Maderno"
+},
+{
+  situation: "SITUATION 03 – The following questions pertain to Topic 03: Historic Style 2.",
+  question: "How many architects worked on St. Peter’s Basilica throughout its construction history?",
+  choices: [
+    "4",
+    "6",
+    "8",
+    "12"
+  ],
+  correct: "8"
+},
+{
+  situation: "SITUATION 03 – The following questions pertain to Topic 03: Historic Style 2.",
+  question: "Which architectural style means \"Roman-like\" in character and design?",
+  choices: [
+    "Romanesque",
+    "Baroque",
+    "Romania",
+    "Romantic"
+  ],
+  correct: "Romanesque"
+},
+{
+  situation: "SITUATION 03 – The following questions pertain to Topic 03: Historic Style 2.",
+  question: "Which type of vault was widely used in Romanesque architecture to support stone roofs?",
+  choices: [
+    "Fan vault",
+    "Barrel vault",
+    "Groin vault",
+    "Cloister vault"
+  ],
+  correct: "Barrel vault"
+},
+{
+  situation: "SITUATION 03 – The following questions pertain to Topic 03: Historic Style 2.",
+  question: "What style of architecture characterizes the Baptistery of the Florence Cathedral in Italy, built in the 11th century?",
+  choices: [
+    "Renaissance",
+    "Rococo",
+    "Romanesque",
+    "Gothic"
+  ],
+  correct: "Romanesque"
+},
+{
+  situation: "SITUATION 03 – The following questions pertain to Topic 03: Historic Style 2.",
+  question: "Which cathedral forms one of the most famous architectural groupings in the world, including a Cathedral, Baptistery, Campanile, and Campo Santo?",
+  choices: [
+    "Pisa Cathedral",
+    "Winchester Cathedral",
+    "Monreale Cathedral",
+    "Manila Cathedral"
+  ],
+  correct: "Pisa Cathedral"
+},
+{
+  situation: "SITUATION 03 – The following questions pertain to Topic 03: Historic Style 2.",
+  question: "What is considered the smallest cathedral in the world?",
+  choices: [
+    "Nice Cathedral",
+    "Nin Cathedral",
+    "Nine Cathedral",
+    "Nun’s Cathedral"
+  ],
+  correct: "Nin Cathedral"
+},
+{
+  situation: "SITUATION 03 – The following questions pertain to Topic 03: Historic Style 2.",
+  question: "The idea of wagon vaulting is based on the principle of:",
+  choices: [
+    "Arch",
+    "Post and Lintel",
+    "Trabeated Construction",
+    "NOTA"
+  ],
+  correct: "Arch"
+},
+{
+  situation: "SITUATION 03 – The following questions pertain to Topic 03: Historic Style 2.",
+  question: "What happens to an arch when it is extruded along its axis?",
+  choices: [
+    "Barrel",
+    "Dome",
+    "Cylinder",
+    "Vault"
+  ],
+  correct: "Barrel"
+},
+{
+  situation: "SITUATION 03 – The following questions pertain to Topic 03: Historic Style 2.",
+  question: "A barrel or wagon vault is also known as a:",
+  choices: [
+    "Funnel vault",
+    "Long vault",
+    "Tunnel vault",
+    "Line vault"
+  ],
+  correct: "Tunnel vault"
+},
+{
+  situation: "SITUATION 03 – The following questions pertain to Topic 03: Historic Style 2.",
+  question: "Which architectural element helps transfer the lateral thrust of a barrel vault to the ground?",
+  choices: [
+    "Flying buttress",
+    "Corbel",
+    "Thick supporting walls",
+    "Pilaster"
+  ],
+  correct: "Thick supporting walls"
+},
+{
+  situation: "SITUATION 03 – The following questions pertain to Topic 03: Historic Style 2.",
+  question: "Romanesque interiors were often dimly lit due to:",
+  choices: [
+    "Small, deeply set windows",
+    "Lack of chandeliers",
+    "Use of dark stone",
+    "No clerestory"
+  ],
+  correct: "Small, deeply set windows"
+},
+{
+  situation: "SITUATION 03 – The following questions pertain to Topic 03: Historic Style 2.",
+  question: "In architectural history, this style emerged primarily as a form of religious expression, featuring large structure",
+  choices: [
+    "Ecclesiastic Architecture",
+    "Flamboyant Architecture",
+    "Rayonnant Architecture",
+    "Pseudo Architecture"
+  ],
+  correct: "Ecclesiastic Architecture"
+},
+{
+  situation: "SITUATION 03 – The following questions pertain to Topic 03: Historic Style 2.",
+  question: "What is the term for the bishop’s ceremonial seat in a cathedral?",
+  choices: [
+    "Cathera",
+    "Cathedra",
+    "Cathehedra",
+    "Thehedral"
+  ],
+  correct: "Cathedra"
+},
+{
+  situation: "SITUATION 03 – The following questions pertain to Topic 03: Historic Style 2.",
+  question: "What do you call the raised stand from which the gospels or epistles were read in early churches?",
+  choices: [
+    "Podium",
+    "Pulpit",
+    "Ambo",
+    "Choir"
+  ],
+  correct: "Ambo"
+},
+{
+  situation: "SITUATION 03 – The following questions pertain to Topic 03: Historic Style 2.",
+  question: "In early Christian or Byzantine churches, what is the enclosed or open space at the western entrance called?",
+  choices: [
+    "Sunset portal",
+    "Vestibule",
+    "West portal",
+    "Narthex"
+  ],
+  correct: "Narthex"
+},
+{
+  situation: "SITUATION 03 – The following questions pertain to Topic 03: Historic Style 2.",
+  question: "What is the typical plan layout of Early Christian architecture?",
+  choices: [
+    "Latin plan",
+    "Cross-in-square plan",
+    "Octagonal plan",
+    "Basilican plan"
+  ],
+  correct: "Basilican plan"
+},
+{
+  situation: "SITUATION 03 – The following questions pertain to Topic 03: Historic Style 2.",
+  question: "Which architectural style is known for simplicity in its exterior and richness in its interior?",
+  choices: [
+    "Byzantine Architecture",
+    "Medieval Architecture",
+    "Gothic Architecture",
+    "Renaissance Architecture"
+  ],
+  correct: "Byzantine Architecture"
+},
+{
+  situation: "SITUATION 03 – The following questions pertain to Topic 03: Historic Style 2.",
+  question: "Hagia Sophia is an example of which architectural style?",
+  choices: [
+    "Romanesque Architecture",
+    "Byzantine Architecture",
+    "Renaissance",
+    "None of the choices"
+  ],
+  correct: "Byzantine Architecture"
+},
+{
+  situation: "SITUATION 03 – The following questions pertain to Topic 03: Historic Style 2.",
+  question: "What is true about a merlon in medieval architecture?",
+  choices: [
+    "Narrowly pierced by embrasure slits",
+    "Provides vertical aesthetic balance",
+    "Represents a religious belief",
+    "None of the above"
+  ],
+  correct: "Narrowly pierced by embrasure slits"
+},
+{
+  situation: "SITUATION 03 – The following questions pertain to Topic 03: Historic Style 2.",
+  question: "What is another term associated with crenellation found in medieval castles?",
+  choices: [
+    "Bartizan",
+    "Embrasures",
+    "Cavetto",
+    "None of the above"
+  ],
+  correct: "Embrasures"
+},
+{
+  situation: "SITUATION 03 – The following questions pertain to Topic 03: Historic Style 2.",
+  question: "What is a defining structural feature of Byzantine church architecture?",
+  choices: [
+    "Use of ribbed vaults",
+    "Pointed arches and flying buttresses",
+    "Large central dome on pendentives",
+    "Heavy timber trusses and flat ceilings"
+  ],
+  correct: "Large central dome on pendentives"
+},
+{
+  situation: "SITUATION 04 – The following questions pertain to Topic 04: Historic Style 3.",
+  question: "Which post-colonial phase structure features a dome and Palladian style?",
+  choices: [
+    "Jefferson Memorial",
+    "Lincoln Memorial",
+    "Supreme Court",
+    "US Capitol"
+  ],
+  correct: "Jefferson Memorial"
+},
+{
+  situation: "SITUATION 04 – The following questions pertain to Topic 04: Historic Style 3.",
+  question: "What is considered the first planned rowhouse development in the United States?",
+  choices: [
+    "Beacon Hill, Boston",
+    "Colonnade Row, New York",
+    "Greenwich Village, NYC",
+    "Society Hill, Philadelphia"
+  ],
+  correct: "Colonnade Row, New York"
+},
+{
+  situation: "SITUATION 04 – The following questions pertain to Topic 04: Historic Style 3.",
+  question: "What was the tallest building in the world in 1930?",
+  choices: [
+    "Chrysler Building",
+    "Empire State Building",
+    "Woolworth Building",
+    "Rockefeller Center"
+  ],
+  correct: "Chrysler Building"
+},
+{
+  situation: "SITUATION 04 – The following questions pertain to Topic 04: Historic Style 3.",
+  question: "Who were the architects of the Empire State Building?",
+  choices: [
+    "Cass Gilbert",
+    "McKim, Mead & White",
+    "Shreeve, Lamb, and Harmon",
+    "Richard Morris Hunt"
+  ],
+  correct: "Shreeve, Lamb, and Harmon"
+},
+{
+  situation: "SITUATION 04 – The following questions pertain to Topic 04: Historic Style 3.",
+  question: "Which of the following is an example of famous domestic architecture in the United States?",
+  choices: [
+    "White House",
+    "Monticello",
+    "Fallingwater",
+    "Robie House"
+  ],
+  correct: "Fallingwater"
+},
+{
+  situation: "SITUATION 04 – The following questions pertain to Topic 04: Historic Style 3.",
+  question: "Who was the architect of Monticello?",
+  choices: [
+    "Thomas Jefferson",
+    "Frank Lloyd Wright",
+    "Richard Morris Hunt",
+    "Charles Bulfinch"
+  ],
+  correct: "Thomas Jefferson"
+},
+{
+  situation: "SITUATION 04 – The following questions pertain to Topic 04: Historic Style 3.",
+  question: "What is considered the first major product of the Industrial Revolution in architecture, completed in the late 1800s?",
+  choices: [
+    "London Rail Station",
+    "Crystal Palace",
+    "The Great Station",
+    "Crystal Station"
+  ],
+  correct: "Crystal Palace"
+},
+{
+  situation: "SITUATION 04 – The following questions pertain to Topic 04: Historic Style 3.",
+  question: "Who designed the New York Daily News Building?",
+  choices: [
+    "Welton Becket",
+    "Louis Sullivan",
+    "William Van Alen",
+    "Raymond Hood"
+  ],
+  correct: "Raymond Hood"
+},
+{
+  situation: "SITUATION 04 – The following questions pertain to Topic 04: Historic Style 3.",
+  question: "Which architectural school became famous for its commercial style at the turn of the 20th century?",
+  choices: [
+    "Chicago School",
+    "Bauhaus",
+    "New York Architecture",
+    "University of Architecture"
+  ],
+  correct: "Chicago School"
+},
+{
+  situation: "SITUATION 04 – The following questions pertain to Topic 04: Historic Style 3.",
+  question: "What building is referred to as the \"Cathedral of Commerce\"?",
+  choices: [
+    "Empire State Building",
+    "New York Stock Exchange",
+    "Woolworth Building",
+    "Twin Towers"
+  ],
+  correct: "Woolworth Building"
+},
+{
+  situation: "SITUATION 04 – The following questions pertain to Topic 04: Historic Style 3.",
+  question: "What year was the Sears Tower (now Willis Tower) built?",
+  choices: [
+    "1969",
+    "1973",
+    "1950",
+    "1892"
+  ],
+  correct: "1973"
+},
+{
+  situation: "SITUATION 04 – The following questions pertain to Topic 04: Historic Style 3.",
+  question: "Who were the architects of the Sears Tower, completed in 1973?",
+  choices: [
+    "Oscar Niemeyer and Ludwig Mies van der Rohe",
+    "I. M. Pei and Kenzo Tange",
+    "Louis Skidmore, Nathaniel Owings, and John O. Merrill",
+    "All of the above"
+  ],
+  correct: "Louis Skidmore, Nathaniel Owings, and John O. Merrill"
+},
+{
+  situation: "SITUATION 04 – The following questions pertain to Topic 04: Historic Style 3.",
+  question: "Who were the architects behind the design of Rockefeller Center?",
+  choices: [
+    "Van Alen & Becket",
+    "SOM Architects",
+    "Saarinen (father and son)",
+    "Corbett & Hood"
+  ],
+  correct: "Corbett & Hood"
+},
+{
+  situation: "SITUATION 04 – The following questions pertain to Topic 04: Historic Style 3.",
+  question: "Why did Otto Wagner transition from being a Classicist to a Modernist?",
+  choices: [
+    "He wanted to reinvent himself.",
+    "He wanted to teach his students at the Akademie der Bildenden Künste in Vienna something new.",
+    "He was commissioned for the project by the government.",
+    "He used modern equipment and materials in his designs."
+  ],
+  correct: "He used modern equipment and materials in his designs."
+},
+{
+  situation: "SITUATION 04 – The following questions pertain to Topic 04: Historic Style 3.",
+  question: "How did Otto Wagner influence the Modern Movement?",
+  choices: [
+    "He wrote Modern Architecture, a highly influential manifesto of early modern architecture.",
+    "He was a very neat person.",
+    "He followed the Golden Ratio strictly in his architecture.",
+    "He used modern equipment and materials in his designs."
+  ],
+  correct: "He wrote Modern Architecture, a highly influential manifesto of early modern architecture."
+},
+{
+  situation: "SITUATION 04 – The following questions pertain to Topic 04: Historic Style 3.",
+  question: "What is the term used to describe a diverse design idiom?",
+  choices: [
+    "Beaux-Arts",
+    "Art Nouveau",
+    "Art Deco",
+    "Expressionistic"
+  ],
+  correct: "Art Deco"
+},
+{
+  situation: "SITUATION 04 – The following questions pertain to Topic 04: Historic Style 3.",
+  question: "Which architectural style is known for its curved lines?",
+  choices: [
+    "Art Nouveau",
+    "Art Deco",
+    "Moorish",
+    "Baroque"
+  ],
+  correct: "Art Nouveau"
+},
+{
+  situation: "SITUATION 04 – The following questions pertain to Topic 04: Historic Style 3.",
+  question: "What architectural style flourished between 1925 and 1939?",
+  choices: [
+    "International Style",
+    "Art Nouveau",
+    "Modern Art",
+    "Art Deco"
+  ],
+  correct: "Art Deco"
+},
+{
+  situation: "SITUATION 04 – The following questions pertain to Topic 04: Historic Style 3.",
+  question: "Which architectural style is characterized by the use of whiplash curves and organic, flowing forms?",
+  choices: [
+    "Art Nouveau",
+    "Expressionism",
+    "Baroque",
+    "Postmodernism"
+  ],
+  correct: "Art Nouveau"
+},
+{
+  situation: "SITUATION 04 – The following questions pertain to Topic 04: Historic Style 3.",
+  question: "Which architectural style is characterized by minimal ornamentation, open interior spaces, and the use of modern materials such as glass, steel, and reinforced concrete?",
+  choices: [
+    "Art Deco",
+    "Beaux-Arts",
+    "International Style",
+    "Postmodernism"
+  ],
+  correct: "International Style"
+},
+{
+  situation: "SITUATION 04 – The following questions pertain to Topic 04: Historic Style 3.",
+  question: "Which building is famously known as the “Temple of Power”?",
+  choices: [
+    "AEG Turbine Factory",
+    "AEG Power Tools Factory",
+    "AEG Power Factory",
+    "AEG Power Plant"
+  ],
+  correct: "AEG Turbine Factory"
+},
+{
+  situation: "SITUATION 04 – The following questions pertain to Topic 04: Historic Style 3.",
+  question: "Whose work is the AEG Turbine Factory, an industrial-type structure considered both a manifestation of architecture and engineering?",
+  choices: [
+    "Peter Behrens",
+    "Marcel Breuer",
+    "Alvar Aalto",
+    "Santiago Calatrava"
+  ],
+  correct: "Peter Behrens"
+},
+{
+  situation: "SITUATION 04 – The following questions pertain to Topic 04: Historic Style 3.",
+  question: "Romanesque Revival in the USA was introduced by",
+  choices: [
+    "Louis Sullivan",
+    "Henry H. Richardson",
+    "Frank Lloyd Wright",
+    "Richard Upjohn"
+  ],
+  correct: "Henry H. Richardson"
+},
+{
+  situation: "SITUATION 04 – The following questions pertain to Topic 04: Historic Style 3.",
+  question: "Who popularized the Queen Anne Style?",
+  choices: [
+    "Robert Adam",
+    "Norman Shaw",
+    "Sir Joseph Paxton",
+    "Sir Charles Barry"
+  ],
+  correct: "Norman Shaw"
+},
+{
+  situation: "SITUATION 04 – The following questions pertain to Topic 04: Historic Style 3.",
+  question: "The principal exponent of Art Nouveau in Britain was",
+  choices: [
+    "Wells Coates",
+    "Walter Gropius",
+    "E. Maxwell Fry",
+    "C.R. Mackintosh"
+  ],
+  correct: "C.R. Mackintosh"
+},
+{
+  situation: "SITUATION 04 – The following questions pertain to Topic 04: Historic Style 3.",
+  question: "Which part of the structure was the Japanese bracketing method commonly applied?",
+  choices: [
+    "Stairs",
+    "Door",
+    "Roof system",
+    "Floor tiles"
+  ],
+  correct: "Roof system"
+},
+{
+  situation: "SITUATION 04 – The following questions pertain to Topic 04: Historic Style 3.",
+  question: "What is true about Japanese columns and capitals?",
+  choices: [
+    "Intercolumniation follows ken",
+    "Originated from Gothic style",
+    "Same as Greek columns",
+    "None of the above"
+  ],
+  correct: "Intercolumniation follows ken"
+},
+{
+  situation: "SITUATION 04 – The following questions pertain to Topic 04: Historic Style 3.",
+  question: "What is the difference between a Chinese pagoda and a Japanese pagoda?",
+  choices: [
+    "Chinese red, Japanese purple/white",
+    "Chinese octagonal, Japanese square",
+    "Chinese 25 stories, Japanese 12",
+    "Both are similar in design"
+  ],
+  correct: "Chinese octagonal, Japanese square"
+},
+{
+  situation: "SITUATION 04 – The following questions pertain to Topic 04: Historic Style 3.",
+  question: "What is the plan shape of a Chinese pagoda?",
+  choices: [
+    "Octagonal",
+    "Square",
+    "Hexagonal",
+    "Round"
+  ],
+  correct: "Octagonal"
+},
+{
+  situation: "SITUATION 04 – The following questions pertain to Topic 04: Historic Style 3.",
+  question: "What is a distinct feature of Japanese temples compared to Chinese temples?",
+  choices: [
+    "Use of natural materials and minimal ornamentation",
+    "Painted interiors with gold detailing",
+    "Use of stone columns and wide vaults",
+    "Domed roof structures and spiral staircases"
+  ],
+  correct: "Use of natural materials and minimal ornamentation"
+},
+{
+  situation: "SITUATION 04 – The following questions pertain to Topic 04: Historic Style 3.",
+  question: "Stupa is from what style of architecture?",
+  choices: [
+    "Indian",
+    "Chinese",
+    "Japanese",
+    "Arabic"
+  ],
+  correct: "Indian"
+},
+{
+  situation: "SITUATION 04 – The following questions pertain to Topic 04: Historic Style 3.",
+  question: "It is traditionally the origin of Pagoda Architecture.",
+  choices: [
+    "Stupa",
+    "Minarets",
+    "Pavilions",
+    "Towers"
+  ],
+  correct: "Stupa"
+},
+{
+  situation: "SITUATION 04 – The following questions pertain to Topic 04: Historic Style 3.",
+  question: "Stupa construction was predominantly developed by the ___",
+  choices: [
+    "Burmese",
+    "Chinese",
+    "Arabians",
+    "Indians"
+  ],
+  correct: "Indians"
+},
+{
+  situation: "SITUATION 04 – The following questions pertain to Topic 04: Historic Style 3.",
+  question: "Considered as the oldest stupa in the world which contains the relic of Buddha is ___",
+  choices: [
+    "Great Stupa at Sanchi",
+    "Stupa at Jaipur",
+    "Stupa at Guntupalle",
+    "Dhamek Stupa"
+  ],
+  correct: "Great Stupa at Sanchi"
+},
+{
+  situation: "SITUATION 04 – The following questions pertain to Topic 04: Historic Style 3.",
+  question: "What architectural feature often crowns the top of a stupa symbolizing enlightenment?",
+  choices: [
+    "Harmika",
+    "Chhatra",
+    "Anda",
+    "Medhi"
+  ],
+  correct: "Chhatra"
+},
+{
+  situation: "SITUATION 04 – The following questions pertain to Topic 04: Historic Style 3.",
+  question: "A temple complex considered the largest religious monument in the world, first as a Hindu and later as a Buddhist temple.",
+  choices: [
+    "Angkor Wan",
+    "Angkor Wat",
+    "Jaipur Complex",
+    "Solomon Complex"
+  ],
+  correct: "Angkor Wat"
+},
+{
+  situation: "SITUATION 04 – The following questions pertain to Topic 04: Historic Style 3.",
+  question: "The Angkor Wat was considered as the prime and unique style of:",
+  choices: [
+    "Khmer Architecture",
+    "Cambodian Architecture",
+    "Thai Architecture",
+    "Buddhist Architecture"
+  ],
+  correct: "Khmer Architecture"
+},
+{
+  situation: "SITUATION 04 – The following questions pertain to Topic 04: Historic Style 3.",
+  question: "“Masjid Al Haram” is also known as the:",
+  choices: [
+    "Great Mosque of Islam",
+    "Great Mosque of Mecca",
+    "Great Mosque",
+    "Great Mosque of Islamic World"
+  ],
+  correct: "Great Mosque of Mecca"
+},
+{
+  situation: "SITUATION 04 – The following questions pertain to Topic 04: Historic Style 3.",
+  question: "The part of a mosque which is referred to as the screen.",
+  choices: [
+    "Fawwara",
+    "Dikka",
+    "Patani",
+    "Maqsura"
+  ],
+  correct: "Maqsura"
+},
+{
+  situation: "SITUATION 04 – The following questions pertain to Topic 04: Historic Style 3.",
+  question: "What architecture contributed to the \"Stupa/Rock Cut Temples\"?",
+  choices: [
+    "Egyptian",
+    "Islamic",
+    "Indian",
+    "None of the above"
+  ],
+  correct: "Indian"
+},
+{
+  situation: "SITUATION 04 – The following questions pertain to Topic 04: Historic Style 3.",
+  question: "Who is the architect of Turning Torso?",
+  choices: [
+    "Santiago Calatrava",
+    "Frank Lloyd Wright",
+    "Ludwig Mies Van der Rohe",
+    "Rem Koolhas"
+  ],
+  correct: "Santiago Calatrava"
+},
+{
+  situation: "SITUATION 04 – The following questions pertain to Topic 04: Historic Style 3.",
+  question: "Who is the architect of the Chrysler Building?",
+  choices: [
+    "Frank Lloyd Wright",
+    "Le Corbusier",
+    "Kenzo Tange",
+    "Van Allen"
+  ],
+  correct: "Van Allen"
+},
+{
+  situation: "SITUATION 04 – The following questions pertain to Topic 04: Historic Style 3.",
+  question: "Who is the architect of the World Trade Center?",
+  choices: [
+    "Minoru Yamasaki",
+    "I.M. Pei",
+    "Kenzo Tange",
+    "Jorn Utzon"
+  ],
+  correct: "Minoru Yamasaki"
+},
+{
+  situation: "SITUATION 04 – The following questions pertain to Topic 04: Historic Style 3.",
+  question: "Who is the architect of the Sydney Opera House?",
+  choices: [
+    "Frank Lloyd Wright",
+    "Jorn Utzon",
+    "Le Corbusier",
+    "Kenzo Tange"
+  ],
+  correct: "Jorn Utzon"
+},
+{
+  situation: "SITUATION 04 – The following questions pertain to Topic 04: Historic Style 3.",
+  question: "Who is the architect of the Empire State Building?",
+  choices: [
+    "Van Allen",
+    "Jorn Utzon",
+    "William F. Lamb",
+    "Mies Van der Rohe"
+  ],
+  correct: "William F. Lamb"
+},
+{
+  situation: "SITUATION 04 – The following questions pertain to Topic 04: Historic Style 3.",
+  question: "What is the architectural style of the Malwiya Minaret?",
+  choices: [
+    "Hindu",
+    "Islamic",
+    "Saracenic",
+    "Iraqi"
+  ],
+  correct: "Islamic"
+},
+{
+  situation: "SITUATION 04 – The following questions pertain to Topic 04: Historic Style 3.",
+  question: "What type of structure is the Malwiya Minaret?",
+  choices: [
+    "Stepped Tower",
+    "Minaret",
+    "Observation Tower",
+    "Circular Tower"
+  ],
+  correct: "Minaret"
+},
+{
+  situation: "SITUATION 04 – The following questions pertain to Topic 04: Historic Style 3.",
+  question: "What is the official name of the minaret structure located in Samarra, Iraq?",
+  choices: [
+    "Malwiya Minaret",
+    "Mandani Minaret",
+    "Malmba Minaret",
+    "Mamba Minaret"
+  ],
+  correct: "Malwiya Minaret"
+},
+{
+  situation: "SITUATION 04 – The following questions pertain to Topic 04: Historic Style 3.",
+  question: "In which city is the Malwiya Minaret located?",
+  choices: [
+    "Baghdad",
+    "Samarra",
+    "Mosul",
+    "Basra"
+  ],
+  correct: "Samarra"
+},
+{
+  situation: "SITUATION 04 – The following questions pertain to Topic 04: Historic Style 3.",
+  question: "What is the primary function of the Malwiya Minaret in Islamic architecture?",
+  choices: [
+    "To call worshippers to prayer",
+    "To store religious manuscripts",
+    "To serve as a royal watchtower",
+    "To house religious leaders"
+  ],
+  correct: "To call worshippers to prayer"
+},
+{
+  situation: "SITUATION 04 – The following questions pertain to Topic 04: Historic Style 3.",
+  question: "Who were the two primary designers of the Hagia Sophia?",
+  choices: [
+    "Isidore of Melenia and Anthemius of Tralles",
+    "Isidore of Miletus and Anthemius of Tralles",
+    "Isidore of Tran and Anthemius of Troll",
+    "Isidore of Meant and Isidore of Taft"
+  ],
+  correct: "Isidore of Miletus and Anthemius of Tralles"
+},
+{
+  situation: "SITUATION 04 – The following questions pertain to Topic 04: Historic Style 3.",
+  question: "What was the primary function of the Hagia Sophia from the year 1453 to 1931?",
+  choices: [
+    "Cathedral",
+    "Mosque",
+    "Greek Orthodox Church",
+    "Museum"
+  ],
+  correct: "Mosque"
+},
+{
+  situation: "SITUATION 04 – The following questions pertain to Topic 04: Historic Style 3.",
+  question: "What is the most common material used in the construction of the Hagia Sophia?",
+  choices: [
+    "Ashlar bricks",
+    "Rusticated stone",
+    "Sandstone",
+    "Gravel"
+  ],
+  correct: "Ashlar bricks"
+},
+{
+  situation: "SITUATION 04 – The following questions pertain to Topic 04: Historic Style 3.",
+  question: "What is the current use of the Hagia Sophia today?",
+  choices: [
+    "Catholic Church",
+    "Islamic Mosque",
+    "Museum",
+    "Greek Orthodox Church"
+  ],
+  correct: "Islamic Mosque"
+},
+{
+  situation: "SITUATION 04 – The following questions pertain to Topic 04: Historic Style 3.",
+  question: "What architectural feature of the Hagia Sophia allows natural light to enter the central dome, creating a sense of weightlessness?",
+  choices: [
+    "Clerestory windows",
+    "Oculus",
+    "Ring of windows at the dome's base",
+    "Stained glass panels"
+  ],
+  correct: "Ring of windows at the dome's base"
+},
+{
+  situation: "SITUATION 04 – The following questions pertain to Topic 04: Historic Style 3.",
+  question: "Abstraction has been a fundamental principle of art in which century?",
+  choices: [
+    "18th century",
+    "19th century",
+    "21st century",
+    "20th century"
+  ],
+  correct: "20th century"
+},
+{
+  situation: "SITUATION 04 – The following questions pertain to Topic 04: Historic Style 3.",
+  question: "Pagodas traditionally have how many levels?",
+  choices: [
+    "Odd number",
+    "Even number",
+    "Equal number",
+    "Doesn’t matter"
+  ],
+  correct: "Odd number"
+},
+{
+  situation: "SITUATION 04 – The following questions pertain to Topic 04: Historic Style 3.",
+  question: "Japanese pagodas have what shape that can be easily identified?",
+  choices: [
+    "Octagonal sides",
+    "Square sides",
+    "Decagon sides",
+    "Hexagon sides"
+  ],
+  correct: "Square sides"
+},
+{
+  situation: "SITUATION 04 – The following questions pertain to Topic 04: Historic Style 3.",
+  question: "What is the primary purpose of a pagoda in Japanese and Chinese architecture?",
+  choices: [
+    "Storage for weapons",
+    "Burial chamber",
+    "Place of worship and relic enshrinement",
+    "Residence of monks"
+  ],
+  correct: "Place of worship and relic enshrinement"
+},
+{
+  situation: "SITUATION 04 – The following questions pertain to Topic 04: Historic Style 3.",
+  question: "What distinguishes Chinese pagodas from Japanese pagodas in terms of structural design?",
+  choices: [
+    "Chinese pagodas are shorter and simpler",
+    "Chinese pagodas are taller and more rigidly symmetrical",
+    "Japanese pagodas use steel instead of wood",
+    "Japanese pagodas are built entirely underground"
+  ],
+  correct: "Chinese pagodas are taller and more rigidly symmetrical"
+},
+{
+  situation: "SITUATION 05 – The following questions pertain to Topic 05: Masters of Architecture.",
+  question: "Where is Figure A, a chapel designed by Le Corbusier, located?",
+  choices: [
+    "Lausanne, Switzerland",
+    "Ronchamp, France",
+    "Munich, Germany",
+    "Lugano, Switzerland"
+  ],
+  correct: "Ronchamp, France",
+  image: "figure5A.png"
+},
+{
+  situation: "SITUATION 05 – The following questions pertain to Topic 05: Masters of Architecture.",
+  question: "Where is Figure B, an architecture school designed by Walter Gropius, located?",
+  choices: [
+    "Delft, The Netherlands",
+    "Bregenz, Austria",
+    "Marseille, France",
+    "Dessau, Germany"
+  ],
+  correct: "Dessau, Germany",
+  image: "figure5A.png"
+},
+{
+  situation: "SITUATION 05 – The following questions pertain to Topic 05: Masters of Architecture.",
+  question: "Where is Figure C, a residential house designed by Frank Lloyd Wright located in the USA?",
+  choices: [
+    "New York",
+    "California",
+    "Pennsylvania",
+    "Wisconsin"
+  ],
+  correct: "Pennsylvania",
+  image: "figure5A.png"
+},
+{
+  situation: "SITUATION 05 – The following questions pertain to Topic 05: Masters of Architecture.",
+  question: "Where is Figure D, completed in 1956 and designed by Mies van der Rohe, located?",
+  choices: [
+    "London, England",
+    "Chicago, USA",
+    "Paris, France",
+    "Dresden, Germany"
+  ],
+  correct: "Chicago, USA",
+  image: "figure5A.png"
+},
+{
+  situation: "SITUATION 05 – The following questions pertain to Topic 05: Masters of Architecture.",
+  question: "Where is Figure E, designed by Oscar Niemeyer, located?",
+  choices: [
+    "Portugal",
+    "Argentina",
+    "Spain",
+    "Brazil"
+  ],
+  correct: "Brazil",
+  image: "figure5A.png"
+},
+{
+  situation: "SITUATION 05 – The following questions pertain to Topic 05: Masters of Architecture.",
+  question: "\"Architecture should speak of its time and place, but yearn for timelessness\" is a famous dictum by whom?",
+  choices: [
+    "Frank Lloyd Wright",
+    "Frank Gehry",
+    "Richard Neutra",
+    "Ludwig Mies van der Rohe"
+  ],
+  correct: "Richard Neutra"
+},
+{
+  situation: "SITUATION 05 – The following questions pertain to Topic 05: Masters of Architecture.",
+  question: "Who coined the term “Biorealism”?",
+  choices: [
+    "Frank Lloyd Wright",
+    "Frank Gehry",
+    "Richard Neutra",
+    "Ludwig Mies van der Rohe"
+  ],
+  correct: "Richard Neutra"
+},
+{
+  situation: "SITUATION 05 – The following questions pertain to Topic 05: Masters of Architecture.",
+  question: "Whose works are known as \"skin and bones\" and is famous for the dictum \"less is more\"?",
+  choices: [
+    "Frank Lloyd Wright",
+    "Frank Gehry",
+    "Richard Neutra",
+    "Ludwig Mies van der Rohe"
+  ],
+  correct: "Ludwig Mies van der Rohe"
+},
+{
+  situation: "SITUATION 05 – The following questions pertain to Topic 05: Masters of Architecture.",
+  question: "\"Architecture is the learned game, correct and magnificent, of forms assembled in the light\" is a famous dictum by whom?",
+  choices: [
+    "Ludwig Mies van der Rohe",
+    "Frank Gehry",
+    "Le Corbusier",
+    "Tadao Ando"
+  ],
+  correct: "Le Corbusier"
+},
+{
+  situation: "SITUATION 05 – The following questions pertain to Topic 05: Masters of Architecture.",
+  question: "Who is the architect of the Sagrada Familia in Barcelona?",
+  choices: [
+    "Victor Horta",
+    "Hector Guimard",
+    "Antoni Gaudí",
+    "Eliel Saarinen"
+  ],
+  correct: "Antoni Gaudí"
+},
+{
+  situation: "SITUATION 05 – The following questions pertain to Topic 05: Masters of Architecture.",
+  question: "Who is known as the Father of American Architecture?",
+  choices: [
+    "Frank Lloyd Wright",
+    "Louis Sullivan",
+    "Benjamin Latrobe",
+    "Richard Fuller"
+  ],
+  correct: "Louis Sullivan"
+},
+{
+  situation: "SITUATION 05 – The following questions pertain to Topic 05: Masters of Architecture.",
+  question: "Who is known as the Father of Modernism?",
+  choices: [
+    "Louis Sullivan",
+    "Walter Gropius",
+    "Ludwig Mies van der Rohe",
+    "Rem Koolhaas"
+  ],
+  correct: "Walter Gropius"
+},
+{
+  situation: "SITUATION 05 – The following questions pertain to Topic 05: Masters of Architecture.",
+  question: "Who is the architect of the Guangzhou Opera House?",
+  choices: [
+    "Zaha Hadid",
+    "Richard Rogers",
+    "Rem Koolhaas",
+    "Tadao Ando"
+  ],
+  correct: "Zaha Hadid"
+},
+{
+  situation: "SITUATION 05 – The following questions pertain to Topic 05: Masters of Architecture.",
+  question: "Who is the architect of the Centre Pompidou?",
+  choices: [
+    "Rem Koolhaas",
+    "Richard Rogers",
+    "Walter Gropius",
+    "Louis Sullivan"
+  ],
+  correct: "Richard Rogers"
+},
+{
+  situation: "SITUATION 05 – The following questions pertain to Topic 05: Masters of Architecture.",
+  question: "Which of the following is a famous dictum by Zaha Hadid?",
+  choices: [
+    "Architecture is like writing. You have to edit it over and over so it looks effortless.",
+    "As designers, we have such power to make design change the world. We really need to make better use of our platform and do stuff that is useful.",
+    "Buildings are deeply emotive structures which form our psyche.",
+    "God is in the details."
+  ],
+  correct: "As designers, we have such power to make design change the world. We really need to make better use of our platform and do stuff that is useful."
+},
+{
+  situation: "SITUATION 05 – The following questions pertain to Topic 05: Masters of Architecture.",
+  question: "What is Zaha Hadid's first major built project?",
+  choices: [
+    "BMW Central Building",
+    "Guangzhou Opera House",
+    "Heydar Aliyev Center",
+    "Vitra Fire Station"
+  ],
+  correct: "Vitra Fire Station"
+},
+{
+  situation: "SITUATION 05 – The following questions pertain to Topic 05: Masters of Architecture.",
+  question: "Famous architect who received the Pritzker Architecture Prize in 2004 and the Stirling Prize in 2010 and 2011.",
+  choices: [
+    "Richard Rogers",
+    "Zaha Hadid",
+    "Jorn Utzon",
+    "Toyo Ito"
+  ],
+  correct: "Zaha Hadid"
+},
+{
+  situation: "SITUATION 05 – The following questions pertain to Topic 05: Masters of Architecture.",
+  question: "Which museum designed by Zaha Hadid is located in Cincinnati, Ohio?",
+  choices: [
+    "MAXXI Museum",
+    "Riverside Museum",
+    "Rosenthal Center for Contemporary Art",
+    "Guggenheim Museum"
+  ],
+  correct: "Rosenthal Center for Contemporary Art"
+},
+{
+  situation: "SITUATION 05 – The following questions pertain to Topic 05: Masters of Architecture.",
+  question: "Zaha Hadid is known for her architectural style often described as:",
+  choices: [
+    "Neo-Classical",
+    "Brutalist",
+    "Deconstructivist",
+    "Rationalist"
+  ],
+  correct: "Deconstructivist"
+},
+{
+  situation: "SITUATION 05 – The following questions pertain to Topic 05: Masters of Architecture.",
+  question: "Which Zaha Hadid project was built in Azerbaijan and is known for its flowing, curved form?",
+  choices: [
+    "Vitra Campus",
+    "Heydar Aliyev Center",
+    "London Aquatics Centre",
+    "MAXXI National Museum"
+  ],
+  correct: "Heydar Aliyev Center"
+},
+{
+  situation: "SITUATION 05 – The following questions pertain to Topic 05: Masters of Architecture.",
+  question: "Architectural theory developed by Richard Neutra.",
+  choices: [
+    "Biorealism",
+    "Brutalism",
+    "Deconstructivism",
+    "Futurism"
+  ],
+  correct: "Biorealism"
+},
+{
+  situation: "SITUATION 05 – The following questions pertain to Topic 05: Masters of Architecture.",
+  question: "“Trencadis”",
+  choices: [
+    "Zaha Hadid",
+    "Frank Gehry",
+    "Victor Horta",
+    "Antoni Gaudi"
+  ],
+  correct: "Antoni Gaudi"
+},
+{
+  situation: "SITUATION 05 – The following questions pertain to Topic 05: Masters of Architecture.",
+  question: "Architect who uses \"Catenary Curve\" in his works.",
+  choices: [
+    "Santiago Calatrava",
+    "Eero Saarinen",
+    "Antoni Gaudi",
+    "Frank Gehry"
+  ],
+  correct: "Antoni Gaudi"
+},
+{
+  situation: "SITUATION 05 – The following questions pertain to Topic 05: Masters of Architecture.",
+  question: "Architect of Bauhaus.",
+  choices: [
+    "Le Corbusier",
+    "Mies van der Rohe",
+    "Bruno Taut",
+    "Walter Gropius"
+  ],
+  correct: "Walter Gropius"
+},
+{
+  situation: "SITUATION 05 – The following questions pertain to Topic 05: Masters of Architecture.",
+  question: "He was also an urban planner, painter, sculptor, writer, and modern furniture designer.",
+  choices: [
+    "Le Corbusier",
+    "Frank Lloyd Wright",
+    "Eero Saarinen",
+    "Antoni Gaudi"
+  ],
+  correct: "Le Corbusier"
+},
+{
+  situation: "SITUATION 05 – The following questions pertain to Topic 05: Masters of Architecture.",
+  question: "Most of his buildings are characterized by “skin and bones” architecture.",
+  choices: [
+    "Ludwig Mies van der Rohe",
+    "Louis Kahn",
+    "Frank Gehry",
+    "Oscar Niemeyer"
+  ],
+  correct: "Ludwig Mies van der Rohe"
+},
+{
+  situation: "SITUATION 05 – The following questions pertain to Topic 05: Masters of Architecture.",
+  question: "Mies van der Rohe's masterpiece, which marked the dawn of the International Style, was the Farnsworth House made of bold steel and glass. What was Mies van der Rohe’s primary role in the project?",
+  choices: [
+    "Architect",
+    "Interior Designer",
+    "Architect-Contractor",
+    "Contractor"
+  ],
+  correct: "Architect"
+},
+{
+  situation: "SITUATION 05 – The following questions pertain to Topic 05: Masters of Architecture.",
+  question: "Why was the Farnsworth House painted white?",
+  choices: [
+    "To integrate it with nature as the only visible color",
+    "To keep out the sun’s heat",
+    "To maintain a clean look",
+    "None of the above"
+  ],
+  correct: "To integrate it with nature as the only visible color"
+},
+{
+  situation: "SITUATION 05 – The following questions pertain to Topic 05: Masters of Architecture.",
+  question: "The only residential project of Ludwig Mies van der Rohe.",
+  choices: [
+    "Farnsworth House",
+    "Seagram Building",
+    "Villa Savoye",
+    "Glass House"
+  ],
+  correct: "Farnsworth House"
+},
+{
+  situation: "SITUATION 05 – The following questions pertain to Topic 05: Masters of Architecture.",
+  question: "Along with Le Corbusier, Alvar Aalto, and Frank Lloyd Wright, he is widely regarded as one of the pioneering masters of modern architecture.",
+  choices: [
+    "Le Corbusier",
+    "Ludwig Mies van der Rohe",
+    "Walter Gropius",
+    "Buckminster Fuller"
+  ],
+  correct: "Ludwig Mies van der Rohe"
+},
+{
+  situation: "SITUATION 05 – The following questions pertain to Topic 05: Masters of Architecture.",
+  question: "What structure designed by Antonio Gaudi almost made him qualified to become a Catholic saint?",
+  choices: [
+    "Sagrada Familia",
+    "Casa Mila",
+    "Casa Batlló",
+    "None of the above"
+  ],
+  correct: "Sagrada Familia"
+},
+{
+  situation: "SITUATION 05 – The following questions pertain to Topic 05: Masters of Architecture.",
+  question: "Casa Mila, designed by Catalan architect Antoni Gaudi, is also known as:",
+  choices: [
+    "La Pedrero",
+    "Lacasa Quario",
+    "La Pedrista",
+    "La Pedrera"
+  ],
+  correct: "La Pedrera"
+},
+{
+  situation: "SITUATION 05 – The following questions pertain to Topic 05: Masters of Architecture.",
+  question: "Gaudi’s intent in designing this structure was to create a:",
+  choices: [
+    "Architectural symbol",
+    "Heritage symbol of the area",
+    "Spiritual symbol",
+    "Unconventional symbol"
+  ],
+  correct: "Spiritual symbol"
+},
+{
+  situation: "SITUATION 05 – The following questions pertain to Topic 05: Masters of Architecture.",
+  question: "He is known as the Father of Fantastic Architecture.",
+  choices: [
+    "Marcel Lajos Breuer",
+    "Walter Gropius",
+    "Buckminster Fuller",
+    "Antonio Gaudi"
+  ],
+  correct: "Antonio Gaudi"
+},
+{
+  situation: "SITUATION 05 – The following questions pertain to Topic 05: Masters of Architecture.",
+  question: "The most prominent Art Nouveau architect whose works include the Güell Palace in Spain.",
+  choices: [
+    "Victor Horta",
+    "Antoni Gaudí",
+    "Hector Guimard",
+    "Charles Rennie Mackintosh"
+  ],
+  correct: "Antoni Gaudí"
+},
+{
+  situation: "SITUATION 05 – The following questions pertain to Topic 05: Masters of Architecture.",
+  question: "One of Frank Lloyd Wright’s most iconic examples of organic architecture.",
+  choices: [
+    "Robie House",
+    "Petronas Towers",
+    "Fallingwater",
+    "Dulles Airport"
+  ],
+  correct: "Fallingwater"
+},
+{
+  situation: "SITUATION 05 – The following questions pertain to Topic 05: Masters of Architecture.",
+  question: "What was the ambitious tower designed by Frank Lloyd Wright that was never built?",
+  choices: [
+    "Mile High Tower",
+    "Kaufmann Residence",
+    "Taliesin West",
+    "Robie House"
+  ],
+  correct: "Mile High Tower"
+},
+{
+  situation: "SITUATION 05 – The following questions pertain to Topic 05: Masters of Architecture.",
+  question: "\"Form follows function\" is a principle that became the basis of organic design.",
+  choices: [
+    "Louis Sullivan",
+    "Toyo Ito",
+    "Frank Lloyd Wright",
+    "Zaha Hadid"
+  ],
+  correct: "Louis Sullivan"
+},
+{
+  situation: "SITUATION 05 – The following questions pertain to Topic 05: Masters of Architecture.",
+  question: "Which residence designed by Frank Lloyd Wright features cantilevered terraces over a waterfall?",
+  choices: [
+    "Fallingwater",
+    "Robie House",
+    "Taliesin",
+    "Unity Temple"
+  ],
+  correct: "Fallingwater"
+},
+{
+  situation: "SITUATION 05 – The following questions pertain to Topic 05: Masters of Architecture.",
+  question: "Which Frank Lloyd Wright project served as both a school and his personal winter residence in Arizona?",
+  choices: [
+    "Taliesin West",
+    "Broadacre City",
+    "Unity Temple",
+    "Usonian House"
+  ],
+  correct: "Taliesin West"
+},
+{
+  situation: "SITUATION 05 – The following questions pertain to Topic 05: Masters of Architecture.",
+  question: "Who is the architect of the Farnsworth House?",
+  choices: [
+    "Le Corbusier",
+    "Ludwig Mies van der Rohe",
+    "Frank Lloyd Wright",
+    "Louis Sullivan"
+  ],
+  correct: "Ludwig Mies van der Rohe"
+},
+{
+  situation: "SITUATION 05 – The following questions pertain to Topic 05: Masters of Architecture.",
+  question: "What architectural style did the architect apply in designing the Farnsworth House?",
+  choices: [
+    "Modern Organic",
+    "Modern International",
+    "Classical",
+    "Art Nouveau"
+  ],
+  correct: "Modern International"
+},
+{
+  situation: "SITUATION 05 – The following questions pertain to Topic 05: Masters of Architecture.",
+  question: "He was a German-American architect, the last director of Berlin's Bauhaus, and later headed the Department of Architecture at the Illinois Institute of Technology in Chicago.",
+  choices: [
+    "Louis Kahn",
+    "Mies van der Rohe",
+    "Frank Lloyd Wright",
+    "Walter Gropius"
+  ],
+  correct: "Mies van der Rohe"
+},
+{
+  situation: "SITUATION 05 – The following questions pertain to Topic 05: Masters of Architecture.",
+  question: "Who was the architect of the German Pavilion?",
+  choices: [
+    "Mies van der Rohe",
+    "Louis Kahn",
+    "Walter Gropius",
+    "Frank Lloyd Wright"
+  ],
+  correct: "Mies van der Rohe"
+},
+{
+  situation: "SITUATION 05 – The following questions pertain to Topic 05: Masters of Architecture.",
+  question: "In what year was the German Pavilion constructed?",
+  choices: [
+    "1929",
+    "1939",
+    "1965",
+    "During World War II"
+  ],
+  correct: "1929"
+},
+{
+  situation: "SITUATION 05 – The following questions pertain to Topic 05: Masters of Architecture.",
+  question: "A structure designed by Frank Lloyd Wright with distinctive horizontal and vertical lines.",
+  choices: [
+    "Fallingwater",
+    "Robie House",
+    "Taliesin West",
+    "Unity Temple"
+  ],
+  correct: "Robie House"
+},
+{
+  situation: "SITUATION 05 – The following questions pertain to Topic 05: Masters of Architecture.",
+  question: "Architect of the Robie House.",
+  choices: [
+    "Frank Lloyd Wright",
+    "Philip Johnson",
+    "Louis Kahn",
+    "Walter Gropius"
+  ],
+  correct: "Frank Lloyd Wright"
+},
+{
+  situation: "SITUATION 05 – The following questions pertain to Topic 05: Masters of Architecture.",
+  question: "This Frank Lloyd Wright building served as his winter home and architectural school in the Arizona desert.",
+  choices: [
+    "Fallingwater",
+    "Unity Temple",
+    "Johnson Wax Building",
+    "Taliesin West"
+  ],
+  correct: "Taliesin West"
+},
+{
+  situation: "SITUATION 05 – The following questions pertain to Topic 05: Masters of Architecture.",
+  question: "Where can you find the most notable feature of the building Casa Mila?",
+  choices: [
+    "Floorings",
+    "Walls",
+    "Roofs",
+    "Exterior walls"
+  ],
+  correct: "Roofs"
+},
+{
+  situation: "SITUATION 05 – The following questions pertain to Topic 05: Masters of Architecture.",
+  question: "The large stone blocks used as statue materials in Casa Mila were quarried from:",
+  choices: [
+    "Limestone",
+    "Sandstone",
+    "Piedra",
+    "Gneiss"
+  ],
+  correct: "Sandstone"
+},
+{
+  situation: "SITUATION 06 – The following questions pertain to Topic 06: Modern/Contemporary Architecture.",
+  question: "Who is the architect of the Lotus Temple building?",
+  choices: ["Hernan Ruiz", "Fariborz Sahba", "Norman Foster", "Frank Gehry"],
+  correct: "Fariborz Sahba"
+},
+{
+  situation: "SITUATION 06 – The following questions pertain to Topic 06: Modern/Contemporary Architecture.",
+  question: "Who is the architect of the Dancing House building?",
+  choices: ["Hernan Ruiz", "Fariborz Sahba", "Norman Foster", "Frank Gehry"],
+  correct: "Frank Gehry"
+},
+{
+  situation: "SITUATION 06 – The following questions pertain to Topic 06: Modern/Contemporary Architecture.",
+  question: "Who is the architect of the Gherkin building?",
+  choices: ["Hernan Ruiz", "Fariborz Sahba", "Norman Foster", "Frank Gehry"],
+  correct: "Norman Foster"
+},
+{
+  situation: "SITUATION 06 – The following questions pertain to Topic 06: Modern/Contemporary Architecture.",
+  question: "Who is the architect of the One World Trade Center building?",
+  choices: ["Hernan Ruiz", "Minoru Yamasaki", "Norman Foster", "David Childs"],
+  correct: "David Childs"
+},
+{
+  situation: "SITUATION 06 – The following questions pertain to Topic 06: Modern/Contemporary Architecture.",
+  question: "Who is the architect of the Cordoba Cathedral building?",
+  choices: ["Hernan Ruiz", "Minoru Yamasaki", "Norman Foster", "David Childs"],
+  correct: "Hernan Ruiz"
+},
+{
+  situation: "SITUATION 06 – The following questions pertain to Topic 06: Modern/Contemporary Architecture.",
+  question: "Who is the architect of the Dulles International Airport building?",
+  choices: ["Shigeru Ban", "Adolf Loos", "Frank Gehry", "Eero Saarinen"],
+  correct: "Eero Saarinen"
+},
+{
+  situation: "SITUATION 06 – The following questions pertain to Topic 06: Modern/Contemporary Architecture.",
+  question: "Who is the architect of the Haus Scheu building?",
+  choices: ["Shigeru Ban", "Adolf Loos", "Frank Gehry", "Eero Saarinen"],
+  correct: "Adolf Loos"
+},
+{
+  situation: "SITUATION 06 – The following questions pertain to Topic 06: Modern/Contemporary Architecture.",
+  question: "Who is the architect of the Centre Pompidou Metz building?",
+  choices: ["Shigeru Ban", "Adolf Loos", "Frank Gehry", "Eero Saarinen"],
+  correct: "Shigeru Ban"
+},
+{
+  situation: "SITUATION 06 – The following questions pertain to Topic 06: Modern/Contemporary Architecture.",
+  question: "Who is the architect of the Louis Vuitton building?",
+  choices: ["Shigeru Ban", "Adolf Loos", "Frank Gehry", "Eero Saarinen"],
+  correct: "Frank Gehry"
+},
+{
+  situation: "SITUATION 06 – The following questions pertain to Topic 06: Modern/Contemporary Architecture.",
+  question: "Who is the architect of the Wainwright building?",
+  choices: ["Louis Sullivan", "Antoni Gaudi", "Herzog & de Meuron", "Alvar Aalto"],
+  correct: "Louis Sullivan"
+},
+{
+  situation: "SITUATION 06 – The following questions pertain to Topic 06: Modern/Contemporary Architecture.",
+  question: "Who is the architect of the Tate Modern building?",
+  choices: ["Louis Sullivan", "Antoni Gaudi", "Herzog & de Meuron", "Alvar Aalto"],
+  correct: "Herzog & de Meuron"
+},
+{
+  situation: "SITUATION 06 – The following questions pertain to Topic 06: Modern/Contemporary Architecture.",
+  question: "Who is the architect of the Sagrada Familia building?",
+  choices: ["Louis Sullivan", "Antoni Gaudi", "Herzog & de Meuron", "Alvar Aalto"],
+  correct: "Antoni Gaudi"
+},
+{
+  situation: "SITUATION 06 – The following questions pertain to Topic 06: Modern/Contemporary Architecture.",
+  question: "Who is the architect of the Finlandia Hall building?",
+  choices: ["Louis Sullivan", "Antoni Gaudi", "Herzog & de Meuron", "Alvar Aalto"],
+  correct: "Alvar Aalto"
+},
+{
+  situation: "SITUATION 06 – The following questions pertain to Topic 06: Modern/Contemporary Architecture.",
+  question: "Who is the architect of the Villa Savoye building?",
+  choices: ["Le Corbusier", "Zaha Hadid", "Renzo Piano", "Rem Koolhaas"],
+  correct: "Le Corbusier"
+},
+{
+  situation: "SITUATION 06 – The following questions pertain to Topic 06: Modern/Contemporary Architecture.",
+  question: "Who is the architect of the Walt Disney Concert Hall building?",
+  choices: ["Frank Gehry", "Richard Meier", "Moshe Safdie", "Daniel Libeskind"],
+  correct: "Frank Gehry"
+},
+{
+  situation: "SITUATION 06 – The following questions pertain to Topic 06: Modern/Contemporary Architecture.",
+  question: "It was the tallest building in the world from 1913 to 1930, with a height of 792 feet (241 m).",
+  choices: ["Chrysler Building", "Empire State Building", "Woolworth Building", "The Home Life Insurance Building"],
+  correct: "Woolworth Building"
+},
+{
+  situation: "SITUATION 06 – The following questions pertain to Topic 06: Modern/Contemporary Architecture.",
+  question: "Who is the architect of the United States Capitol?",
+  choices: ["James Hoban", "Thomas Jefferson", "Frank Lloyd Wright", "William Thornton"],
+  correct: "William Thornton"
+},
+{
+  situation: "SITUATION 06 – The following questions pertain to Topic 06: Modern/Contemporary Architecture.",
+  question: "Who is the architect of the White House?",
+  choices: ["James Hoban", "Thomas Jefferson", "Frank Lloyd Wright", "William Thornton"],
+  correct: "James Hoban"
+},
+{
+  situation: "SITUATION 06 – The following questions pertain to Topic 06: Modern/Contemporary Architecture.",
+  question: "Who is the architect of the Sears Tower?",
+  choices: ["SOM", "Fazlur Khan", "Bruce Graham", "Cesar Pelli"],
+  correct: "SOM"
+},
+{
+  situation: "SITUATION 06 – The following questions pertain to Topic 06: Modern/Contemporary Architecture.",
+  question: "Who is the architect of the National Parliament Building in Papua New Guinea?",
+  choices: ["Cecil Hogan King", "Ian Athfield", "Pete Bossley", "Zaha Hadid"],
+  correct: "Cecil Hogan King"
+},
+{
+  situation: "SITUATION 06 – The following questions pertain to Topic 06: Modern/Contemporary Architecture.",
+  question: "Who is the architect of the Tokyo City Hall?",
+  choices: ["Kengo Kuma", "Kisho Kurokawa", "Kenzo Tange", "Toyo Ito"],
+  correct: "Kenzo Tange"
+},
+{
+  situation: "SITUATION 06 – The following questions pertain to Topic 06: Modern/Contemporary Architecture.",
+  question: "Who is the architect of the Tokyo Metropolitan Government Building?",
+  choices: ["Kengo Kuma", "Kisho Kurokawa", "Kenzo Tange", "Shigeru Ban"],
+  correct: "Kenzo Tange"
+},
+{
+  situation: "SITUATION 06 – The following questions pertain to Topic 06: Modern/Contemporary Architecture.",
+  question: "Who is the architect of the Tokyo Metropolitan Gymnasium?",
+  choices: ["Fumihiko Maki", "Kisho Kurokawa", "Kenzo Tange", "Shigeru Ban"],
+  correct: "Kenzo Tange"
+},
+{
+  situation: "SITUATION 06 – The following questions pertain to Topic 06: Modern/Contemporary Architecture.",
+  question: "Who is the architect of the Grange Road House located in Singapore?",
+  choices: ["Pier Luigi Nervi", "Paul Rudolph", "Zaha Hadid", "Eileen Gray"],
+  correct: "Paul Rudolph"
+},
+{
+  situation: "SITUATION 06 – The following questions pertain to Topic 06: Modern/Contemporary Architecture.",
+  question: "Who is the architect of the Peak Tower in Hong Kong?",
+  choices: ["I. M. Pei", "Cesar Pelli", "Terry Tafel", "Pete Bossley"],
+  correct: "I. M. Pei"
+},
+{
+  situation: "SITUATION 06 – The following questions pertain to Topic 06: Modern/Contemporary Architecture.",
+  question: "Who is the Italian architect of the Padre Pio Pilgrimage Church?",
+  choices: ["Renzo Piano", "Pierre Luigi Nervi", "Filippo Brunelleschi", "Richard Rogers"],
+  correct: "Renzo Piano"
+},
+{
+  situation: "SITUATION 06 – The following questions pertain to Topic 06: Modern/Contemporary Architecture.",
+  question: "Who is the architect of the White House?",
+  choices: ["James Hoban", "Thomas Jefferson", "William Thornton", "George Bergstrom"],
+  correct: "James Hoban"
+},
+{
+  situation: "SITUATION 06 – The following questions pertain to Topic 06: Modern/Contemporary Architecture.",
+  question: "Who is the architect of the Getty Center?",
+  choices: ["Richard Meier", "Alvar Aalto", "Eliel Saarinen", "Philip Johnson"],
+  correct: "Richard Meier"
+},
+{
+  situation: "SITUATION 06 – The following questions pertain to Topic 06: Modern/Contemporary Architecture.",
+  question: "What is the famous work of the deconstructivist architect Frank Gehry?",
+  choices: ["Chiat Building", "Sydney Opera House", "Walt Disney Concert Hall", "Heydar Aliyev"],
+  correct: "Walt Disney Concert Hall"
+},
+{
+  situation: "SITUATION 06 – The following questions pertain to Topic 06: Modern/Contemporary Architecture.",
+  question: "Who is the architect of the Sydney Opera House?",
+  choices: ["Zaha Hadid", "Frank Gehry", "Richard Rogers", "Jorn Utzon"],
+  correct: "Jorn Utzon"
+},
+{
+  situation: "SITUATION 06 – The following questions pertain to Topic 06: Modern/Contemporary Architecture.",
+  question: "Who is the Finnish architect famous for Art Nouveau in his early years?",
+  choices: ["Hugo Alvar Aalto", "Gottlieb Eliel Saarinen", "Eero Saarinen", "Philip Johnson"],
+  correct: "Gottlieb Eliel Saarinen"
+},
+{
+  situation: "SITUATION 06 – The following questions pertain to Topic 06: Modern/Contemporary Architecture.",
+  question: "Who is the Finnish architect whose projects included architecture, glass, furniture, and textile design?",
+  choices: ["Hugo Alvar Aalto", "Gottlieb Eliel Saarinen", "Eero Saarinen", "Philip Johnson"],
+  correct: "Hugo Alvar Aalto"
+},
+{
+  situation: "SITUATION 06 – The following questions pertain to Topic 06: Modern/Contemporary Architecture.",
+  question: "Who is the 21st-century British architect known for curved lines, sharp angles, severe materials, and dynamic façades?",
+  choices: ["David Chipperfield", "Norman Foster", "Zaha Hadid", "Richard Rogers"],
+  correct: "Zaha Hadid"
+},
+{
+  situation: "SITUATION 06 – The following questions pertain to Topic 06: Modern/Contemporary Architecture.",
+  question: "What is the Post-Renaissance structure designed by Burton and Turner in London, featuring a central section, glass, and combined wrought and cast iron?",
+  choices: ["Great Conservatory, Chatsworth", "Palm House, Kew Garden", "King’s Cross Station", "Coal Station"],
+  correct: "Palm House, Kew Garden"
+},
+{
+  situation: "SITUATION 06 – The following questions pertain to Topic 06: Modern/Contemporary Architecture.",
+  question: "Who is known as the Father of Modernism and the Father of Skyscrapers?",
+  choices: ["Ludwig Mies van der Rohe", "Le Corbusier", "Philip Johnson", "Louis Sullivan"],
+  correct: "Louis Sullivan"
+},
+{
+  situation: "SITUATION 06 – The following questions pertain to Topic 06: Modern/Contemporary Architecture.",
+  question: "Who is the architect of the Turning Torso?",
+  choices: ["Santiago Calatrava", "Frank Lloyd Wright", "Ludwig Mies van der Rohe", "Rem Koolhaas"],
+  correct: "Santiago Calatrava"
+},
+{
+  situation: "SITUATION 06 – The following questions pertain to Topic 06: Modern/Contemporary Architecture.",
+  question: "Known for his futuristic and modern designs.",
+  choices: ["Eero Saarinen", "Santiago Calatrava", "Norman Foster", "Tadao Ando"],
+  correct: "Santiago Calatrava"
+},
+{
+  situation: "SITUATION 06 – The following questions pertain to Topic 06: Modern/Contemporary Architecture.",
+  question: "Architect of a building in Taguig who is an American of Chinese descent.",
+  choices: ["Carlos A. Santos-Viola", "Juan Nakpil", "I.M. Pei", "None of the above"],
+  correct: "I.M. Pei"
+},
+{
+  situation: "SITUATION 06 – The following questions pertain to Topic 06: Modern/Contemporary Architecture.",
+  question: "Who was the architect of the Robie House?",
+  choices: ["Le Corbusier", "Carl Gould", "Daniel Libeskind", "Frank Lloyd Wright"],
+  correct: "Frank Lloyd Wright"
+},
+{
+  situation: "SITUATION 06 – The following questions pertain to Topic 06: Modern/Contemporary Architecture.",
+  question: "The tallest building in the world as of 2022.",
+  choices: ["Burj Khalifa", "Shanghai Tower", "Merdeka 118", "One World Trade Center"],
+  correct: "Burj Khalifa"
+},
+{
+  situation: "SITUATION 06 – The following questions pertain to Topic 06: Modern/Contemporary Architecture.",
+  question: "What is the name of the famous structure in the Netherlands built around the 1920s, known for its radical modern design?",
+  choices: ["Robert's House", "Schröder House", "Ritfield House", "Roberstons House"],
+  correct: "Schröder House"
+},
+{
+  situation: "SITUATION 06 – The following questions pertain to Topic 06: Modern/Contemporary Architecture.",
+  question: "What architectural style was the Schröder House designed in?",
+  choices: ["De Stijl", "Art Nouveau", "Jugendstil", "Uthrecian"],
+  correct: "De Stijl"
+},
+{
+  situation: "SITUATION 06 – The following questions pertain to Topic 06: Modern/Contemporary Architecture.",
+  question: "Who was the architect of the Schröder House?",
+  choices: ["Gerrit Rietveld", "Gerry Rhinefiled", "Ger Hart", "Geric Garret"],
+  correct: "Gerrit Rietveld"
+},
+{
+  situation: "SITUATION 06 – The following questions pertain to Topic 06: Modern/Contemporary Architecture.",
+  question: "Which of the following are considered De Stijl colors, commonly used in the Schröder House?",
+  choices: ["Primary colors", "Secondary colors", "Tertiary colors", "Neutral colors"],
+  correct: "Primary colors"
+},
+{
+  situation: "SITUATION 06 – The following questions pertain to Topic 06: Modern/Contemporary Architecture.",
+  question: "What is a defining feature of the Schröder House’s interior layout?",
+  choices: ["Fixed, enclosed rooms", "Traditional symmetrical corridors", "Open, flexible spaces with sliding and rotating panels", "Central grand staircase with chandeliers"],
+  correct: "Open, flexible spaces with sliding and rotating panels"
+},
+{
+  situation: "SITUATION 06 – The following questions pertain to Topic 06: Modern/Contemporary Architecture.",
+  question: "What was the former name of the structure now known as Taipei 101?",
+  choices: ["Taipei 101", "Taipei World Financial Center", "Taipei Tower", "Taipei Bamboo Tower"],
+  correct: "Taipei World Financial Center"
+},
+{
+  situation: "SITUATION 06 – The following questions pertain to Topic 06: Modern/Contemporary Architecture.",
+  question: "Who was the architect of Taipei 101?",
+  choices: ["C.Y. Lee and Partners", "SOM", "I.M. Pei and Partners", "OVE Arup"],
+  correct: "C.Y. Lee and Partners"
+},
+{
+  situation: "SITUATION 06 – The following questions pertain to Topic 06: Modern/Contemporary Architecture.",
+  question: "Which structure surpassed Taipei 101 as one of the tallest buildings in the world?",
+  choices: ["Shanghai Trade Center", "Burj Khalifa", "Petronas Towers", "Hong Kong Financial Tower"],
+  correct: "Burj Khalifa"
+},
+{
+  situation: "SITUATION 06 – The following questions pertain to Topic 06: Modern/Contemporary Architecture.",
+  question: "What natural form inspired the architectural concept of Taipei 101?",
+  choices: ["Swaying grass", "Bamboo", "Chinese stick", "Chinese tree"],
+  correct: "Bamboo"
+},
+{
+  situation: "SITUATION 06 – The following questions pertain to Topic 06: Modern/Contemporary Architecture.",
+  question: "What innovative structural feature was added to Taipei 101 to help it withstand earthquakes?",
+  choices: ["Massive tuned damper", "Seismic base isolators", "Flexible steel bracing", "Shock-absorbing foundation system"],
+  correct: "Massive tuned damper"
+},
+{
+  situation: "SITUATION 06 – The following questions pertain to Topic 06: Modern/Contemporary Architecture.",
+  question: "What is considered the only hotel to have been awarded a seven-star rating in the global hotel industry?",
+  choices: ["5-star", "6-star", "7-star", "4-star"],
+  correct: "7-star"
+},
+{
+  situation: "SITUATION 06 – The following questions pertain to Topic 06: Modern/Contemporary Architecture.",
+  question: "Who was the lead architect of the Burj Al Arab project?",
+  choices: ["WS Atkins", "Tom Wright, WKK Architects", "SOM Architects", "Arquitektonika"],
+  correct: "Tom Wright, WKK Architects"
+},
+{
+  situation: "SITUATION 06 – The following questions pertain to Topic 06: Modern/Contemporary Architecture.",
+  question: "What is the name of Dubai's grandiose structure themed around the mythical lost city, incorporating the flavor of Arabia?",
+  choices: ["Atlantis the Palm", "Palm", "Atlantis", "Arabia"],
+  correct: "Atlantis the Palm"
+},
+{
+  situation: "SITUATION 06 – The following questions pertain to Topic 06: Modern/Contemporary Architecture.",
+  question: "Who were the architects behind the design of Atlantis The Palm?",
+  choices: ["Wimberly, Allison, Tong and Goo (WATG)", "SOM", "PY Tang", "CWK"],
+  correct: "Wimberly, Allison, Tong and Goo (WATG)"
+},
+{
+  situation: "SITUATION 06 – The following questions pertain to Topic 06: Modern/Contemporary Architecture.",
+  question: "Who was the architect in charge of the design of the Raffles Hotel?",
+  choices: ["Brynn Lummus", "Brian Ohara", "Atkin Architects", "SOM"],
+  correct: "Atkin Architects"
+},
+{
+  situation: "SITUATION 06 – The following questions pertain to Topic 06: Modern/Contemporary Architecture.",
+  question: "Where is the Century Spire development located?",
+  choices: ["Tokyo", "Manila", "Singapore", "Nagoya"],
+  correct: "Manila"
+},
+{
+  situation: "SITUATION 06 – The following questions pertain to Topic 06: Modern/Contemporary Architecture.",
+  question: "Who was the conceptual architect of the Century Properties development known as Century Spire?",
+  choices: ["Daniel Libeskind", "I.M. Pei Architects", "PROS Architects", "Locsin and Associates"],
+  correct: "Daniel Libeskind"
+},
+{
+  situation: "SITUATION 06 – The following questions pertain to Topic 06: Modern/Contemporary Architecture.",
+  question: "Located in the heart of Copenhagen, this housing development creates an imaginary mountainside setting through its bi-level design. What is the name of the development?",
+  choices: ["Mountain Dwelling", "Mountain Side", "Mountain Feel", "Mountain View"],
+  correct: "Mountain Dwelling"
+},
+{
+  situation: "SITUATION 06 – The following questions pertain to Topic 06: Modern/Contemporary Architecture.",
+  question: "Who is the young Danish architect behind the Mountain Dwelling and one of Denmark’s most notable architects?",
+  choices: ["Bjarke Ingels", "Jark Inkles", "Bjorn Born", "Zachary Jorn"],
+  correct: "Bjarke Ingels"
+},
+{
+  situation: "SITUATION 06 – The following questions pertain to Topic 06: Modern/Contemporary Architecture.",
+  question: "Who was the architect-of-record for the Cayan Tower, a twisting skyscraper located in Dubai?",
+  choices: ["Atkins", "SOM", "Arquitectonica", "BIG"],
+  correct: "Arquitectonica"
+},
+{
+  situation: "SITUATION 07 – The following questions pertain to Topic 07: Philippine Architecture.",
+  question: "What is the name of Figure A, which is located in Ilocos Norte?",
+  choices: ["Bantay Church", "Paoay Church", "Our Lady of Piat Church", "Bacarra Church"],
+  correct: "Paoay Church",
+  image: "figure7A.png"
+},
+{
+  situation: "SITUATION 07 – The following questions pertain to Topic 07: Philippine Architecture.",
+  question: "What is the name of Figure B, which is located in Albay?",
+  choices: ["Daraga Church", "Bato Church", "Our Lady of Peñafrancia Basilica", "St. John the Evangelist Cathedral"],
+  correct: "Daraga Church",
+  image: "figure7A.png"
+},
+{
+  situation: "SITUATION 07 – The following questions pertain to Topic 07: Philippine Architecture.",
+  question: "What is the name of Figure C, which is located in Cebu?",
+  choices: ["Redemptorist Church", "Our Lady of Mount Carmel Church", "Cebu Metropolitan Church", "Santo Niño Basilica"],
+  correct: "Santo Niño Basilica",
+  image: "figure7A.png"
+},
+{
+  situation: "SITUATION 07 – The following questions pertain to Topic 07: Philippine Architecture.",
+  question: "What is the name of Figure D, which is located in Intramuros, Manila?",
+  choices: ["Santuario de San Jose", "St. Mary's Church", "Santuario de San Antonio", "San Agustin Church"],
+  correct: "San Agustin Church",
+  image: "figure7A.png"
+},
+{
+  situation: "SITUATION 07 – The following questions pertain to Topic 07: Philippine Architecture.",
+  question: "What is the name of Figure E, which is located in Quiapo, Manila?",
+  choices: ["San Sebastian Church", "Santuario de San Jose", "Quiapo Church", "Santa Cruz Church"],
+  correct: "San Sebastian Church",
+  image: "figure7A.png"
+},
+{
+  situation: "SITUATION 07 – The following questions pertain to Topic 07: Philippine Architecture.",
+  question: "How many Filipino National Artists for Architecture were there as of December 2019?",
+  choices: ["6", "5", "4", "7"],
+  correct: "6"
+},
+{
+  situation: "SITUATION 07 – The following questions pertain to Topic 07: Philippine Architecture.",
+  question: "Who is the first National Artist for Architecture?",
+  choices: ["Pablo S. Antonio", "Leandro V. Locsin", "Juan F. Nakpil", "Carlos D. Arguelles"],
+  correct: "Juan F. Nakpil"
+},
+{
+  situation: "SITUATION 07 – The following questions pertain to Topic 07: Philippine Architecture.",
+  question: "Who is the last National Artist for Architecture as of December 2019?",
+  choices: ["Carlos D. Arguelles", "Francisco T. Mañosa", "Pablo S. Antonio", "Jose Maria V. Zaragoza"],
+  correct: "Francisco T. Mañosa"
+},
+{
+  situation: "SITUATION 07 – The following questions pertain to Topic 07: Philippine Architecture.",
+  question: "Who is known for his advocacy of using indigenous Filipino materials?",
+  choices: ["Francisco T. Mañosa", "Ildefonso P. Santos Jr.", "Tomas B. Mapua", "Pablo S. Antonio"],
+  correct: "Francisco T. Mañosa"
+},
+{
+  situation: "SITUATION 07 – The following questions pertain to Topic 07: Philippine Architecture.",
+  question: "Who designed the Manila Jockey Club, Rufino Building, and the University of the Philippines Administration and Library?",
+  choices: ["Juan F. Nakpil", "Tomas B. Mapua", "Ildefonso P. Santos Jr.", "Pablo S. Antonio"],
+  correct: "Pablo S. Antonio"
+},
+{
+  situation: "SITUATION 07 – The following questions pertain to Topic 07: Philippine Architecture.",
+  question: "Who is the architect of the Philam Life Building?",
+  choices: ["Carlos Arguelles", "Jose Maria Zaragoza", "Carlos Santos Viola", "Jorge Ramos"],
+  correct: "Carlos Arguelles"
+},
+{
+  situation: "SITUATION 07 – The following questions pertain to Topic 07: Philippine Architecture.",
+  question: "Who is the architect of the GSIS Building?",
+  choices: ["Carlos Arguelles", "Jose Maria Zaragoza", "Carlos Santos Viola", "Jorge Ramos"],
+  correct: "Jose Maria Zaragoza"
+},
+{
+  situation: "SITUATION 07 – The following questions pertain to Topic 07: Philippine Architecture.",
+  question: "Who is the architect of the Philippine Heart Center Building?",
+  choices: ["Carlos Arguelles", "Jose Maria Zaragoza", "Carlos Santos Viola", "Jorge Ramos"],
+  correct: "Jose Maria Zaragoza"
+},
+{
+  situation: "SITUATION 07 – The following questions pertain to Topic 07: Philippine Architecture.",
+  question: "Who is the architect of the Sto. Domingo Church Building?",
+  choices: ["Carlos Arguelles", "Jose Maria Zaragoza", "Carlos Santos Viola", "Jorge Ramos"],
+  correct: "Jose Maria Zaragoza"
+},
+{
+  situation: "SITUATION 07 – The following questions pertain to Topic 07: Philippine Architecture.",
+  question: "Who is the architect of Iglesia ni Cristo buildings?",
+  choices: ["Carlos Arguelles", "Jose Maria Zaragoza", "Carlos Santos Viola", "Jorge Ramos"],
+  correct: "Carlos Santos Viola"
+},
+{
+  situation: "SITUATION 07 – The following questions pertain to Topic 07: Philippine Architecture.",
+  question: "Famous brutalist architect in the Philippines.",
+  choices: ["Francisco Manosa", "Juan Nakpil", "Leandro Locsin", "None of the above"],
+  correct: "Leandro Locsin"
+},
+{
+  situation: "SITUATION 07 – The following questions pertain to Topic 07: Philippine Architecture.",
+  question: "He is known for the use of floating volumes in his designs.",
+  choices: ["Francisco Manosa", "Juan Nakpil", "Leandro Locsin", "None of the above"],
+  correct: "Leandro Locsin"
+},
+{
+  situation: "SITUATION 07 – The following questions pertain to Topic 07: Philippine Architecture.",
+  question: "Who is the first dean of Filipino architects?",
+  choices: ["Francisco Manosa", "Juan Nakpil", "Leandro Locsin", "None of the above"],
+  correct: "Juan Nakpil"
+},
+{
+  situation: "SITUATION 07 – The following questions pertain to Topic 07: Philippine Architecture.",
+  question: "Latest National Artist for Architecture in the Philippines.",
+  choices: ["Francisco Manosa", "Juan Nakpil", "Leandro Locsin", "None of the above"],
+  correct: "Francisco Manosa"
+},
+{
+  situation: "SITUATION 07 – The following questions pertain to Topic 07: Philippine Architecture.",
+  question: "Famous neo-vernacular architect.",
+  choices: ["Francisco Manosa", "Juan Nakpil", "Leandro Locsin", "None of the above"],
+  correct: "Francisco Manosa"
+},
+{
+  situation: "SITUATION 07 – The following questions pertain to Topic 07: Philippine Architecture.",
+  question: "Who is the Outstanding Professional of the Year 2022?",
+  choices: ["Robert Sac", "Yolanda Reyes", "Gerard Lico", "Jose Siao Ling"],
+  correct: "Gerard Lico"
+},
+{
+  situation: "SITUATION 07 – The following questions pertain to Topic 07: Philippine Architecture.",
+  question: "Who is the Likha Gold Awardee of the Year 2022?",
+  choices: ["Robert Sac", "Yolanda Reyes", "Gerard Lico", "Jose Siao Ling"],
+  correct: "Robert Sac"
+},
+{
+  situation: "SITUATION 07 – The following questions pertain to Topic 07: Philippine Architecture.",
+  question: "Who is the recent National Artist of the Philippines?",
+  choices: ["Chua Chiaco", "Jose Recio", "Gerard Lico", "Francisco Manosa"],
+  correct: "Francisco Manosa"
+},
+{
+  situation: "SITUATION 07 – The following questions pertain to Topic 07: Philippine Architecture.",
+  question: "Who is the recent Eric Nubla Awardee of the Year 2022?",
+  choices: ["Chua Chiaco", "Jose Recio", "Gerard Lico", "Francisco Manosa"],
+  correct: "Gerard Lico"
+},
+{
+  situation: "SITUATION 07 – The following questions pertain to Topic 07: Philippine Architecture.",
+  question: "Who received the Patnubay ng Sining at Kalinangan Award for Architecture?",
+  choices: ["Chua Chiaco", "Robert Sac", "Gerard Lico", "Francisco Manosa"],
+  correct: "Gerard Lico"
+},
+{
+  situation: "SITUATION 07 – The following questions pertain to Topic 07: Philippine Architecture.",
+  question: "Who is the first registered Filipino architect?",
+  choices: ["Carlos Baretto", "Juan Nakpil", "Felix Roxas Arroyo", "Tomas Mapua"],
+  correct: "Tomas Mapua"
+},
+{
+  situation: "SITUATION 07 – The following questions pertain to Topic 07: Philippine Architecture.",
+  question: "Who was the first Filipino architect schooled in London and began his architectural practice in 1858?",
+  choices: ["Carlos Baretto", "Juan Nakpil", "Felix Roxas Arroyo", "Tomas Mapua"],
+  correct: "Felix Roxas Arroyo"
+},
+{
+  situation: "SITUATION 07 – The following questions pertain to Topic 07: Philippine Architecture.",
+  question: "Who was the first National Artist for Architecture in the year 1973?",
+  choices: ["Juan Arellano", "Angel Nakpil", "Tomas Mapua", "Juan Nakpil"],
+  correct: "Juan Nakpil"
+},
+{
+  situation: "SITUATION 07 – The following questions pertain to Topic 07: Philippine Architecture.",
+  question: "Who was the first Likha Awardee in 1982?",
+  choices: ["Leandro Locsin", "Gabriel Formoso", "Cesar Canchela", "Felipe Mendoza"],
+  correct: "Leandro Locsin"
+},
+{
+  situation: "SITUATION 07 – The following questions pertain to Topic 07: Philippine Architecture.",
+  question: "Who was the architect of the Art Deco Crystal Arcade in Escolta, Manila?",
+  choices: ["Andres Bonifacio", "Andres Luna de San Pedro", "Pablo Antonio", "Antonio Toledo"],
+  correct: "Andres Luna de San Pedro"
+},
+{
+  situation: "SITUATION 07 – The following questions pertain to Topic 07: Philippine Architecture.",
+  question: "Who is the first registered female Filipino architect in the Philippines?",
+  choices: ["Yolanda Reyes", "Mercedes Raffinan", "Cecil Ravelas", "Liza Araneta Marcos"],
+  correct: "Mercedes Raffinan"
+},
+{
+  situation: "SITUATION 07 – The following questions pertain to Topic 07: Philippine Architecture.",
+  question: "What is the key government building designed by Ar. Antonio Toledo in Manila?",
+  choices: ["Manila City Hall", "Malacañang", "Philippine General Hospital", "Palacio del Gobernador"],
+  correct: "Manila City Hall"
+},
+{
+  situation: "SITUATION 07 – The following questions pertain to Topic 07: Philippine Architecture.",
+  question: "What is the oldest church in the Philippines?",
+  choices: ["Pasig Church", "San Agustin Church", "San Sebastian Church", "Pinaglabanan Church"],
+  correct: "San Agustin Church"
+},
+{
+  situation: "SITUATION 07 – The following questions pertain to Topic 07: Philippine Architecture.",
+  question: "Who is known as the Father of Philippine Architecture and the first National Artist for Architecture?",
+  choices: ["Antonio Toledo", "Juan Arellano", "Juan Nakpil", "Tomas Mapua"],
+  correct: "Juan Nakpil"
+},
+{
+  situation: "SITUATION 07 – The following questions pertain to Topic 07: Philippine Architecture.",
+  question: "Which architect in the Philippines is known for his Brutalist style or Brutalism?",
+  choices: ["Leandro Locsin", "Pablo Antonio", "Juan Nakpil", "Juan Arellano"],
+  correct: "Leandro Locsin"
+},
+{
+  situation: "SITUATION 07 – The following questions pertain to Topic 07: Philippine Architecture.",
+  question: "Who is the architect of the Church of the Risen Lord, proclaimed in the 1950s as an engineering masterpiece with its double parabola?",
+  choices: ["Leandro Locsin", "Cesar Concio", "Juan Nakpil", "Guillermo Tolentino"],
+  correct: "Leandro Locsin"
+},
+{
+  situation: "SITUATION 07 – The following questions pertain to Topic 07: Philippine Architecture.",
+  question: "Which Filipino architect is known for using passive cooling and designing specialty hospitals?",
+  choices: ["Gabriel Formoso", "Federico Ilustre", "Cesar Concio", "Jorge Ramos"],
+  correct: "Federico Ilustre"
+},
+{
+  situation: "SITUATION 07 – The following questions pertain to Topic 07: Philippine Architecture.",
+  question: "Who is the architect of the Quezon Memorial Shrine?",
+  choices: ["Cesar Concio", "Federico Ilustre", "Gabriel Formoso", "Francisco Mañosa"],
+  correct: "Cesar Concio"
+},
+{
+  situation: "SITUATION 07 – The following questions pertain to Topic 07: Philippine Architecture.",
+  question: "Who is the architect of the Pearl Farm?",
+  choices: ["Francisco Mañosa", "Manuel Mañosa Sr.", "Angelo Mañosa", "Francisco Mañosa Jr."],
+  correct: "Francisco Mañosa"
+},
+{
+  situation: "SITUATION 07 – The following questions pertain to Topic 07: Philippine Architecture.",
+  question: "Which architect is known for his vernacular design?",
+  choices: ["Juan Arellano", "Francisco Mañosa", "Juan Nakpil", "Cesar Concio"],
+  correct: "Francisco Mañosa"
+},
+{
+  situation: "SITUATION 07 – The following questions pertain to Topic 07: Philippine Architecture.",
+  question: "The first neo-vernacular government building in the Philippines.",
+  choices: ["Manila City Hall", "Cebu Capitol", "Cotabato City Hall", "Iloilo City Hall"],
+  correct: "Cotabato City Hall"
+},
+{
+  situation: "SITUATION 07 – The following questions pertain to Topic 07: Philippine Architecture.",
+  question: "The architect of the WHO Headquarters in Manila.",
+  choices: ["Carlos Arguelles", "Alfredo Luz", "Juan Nakpil", "Cesar Concio"],
+  correct: "Alfredo Luz"
+},
+{
+  situation: "SITUATION 07 – The following questions pertain to Topic 07: Philippine Architecture.",
+  question: "A Neo-Renaissance structure considered the first earthquake-resistant building in the Philippines.",
+  choices: ["UST Main Building", "UST Gymnasium", "Manila City Hall", "Philippine Normal University"],
+  correct: "UST Main Building"
+},
+{
+  situation: "SITUATION 07 – The following questions pertain to Topic 07: Philippine Architecture.",
+  question: "Considered the first major work of Leandro Locsin.",
+  choices: ["Philam Life Building", "Cultural Center of the Philippines", "Folk Arts Theater", "Church of the Holy Sacrifice"],
+  correct: "Church of the Holy Sacrifice"
+},
+{
+  situation: "SITUATION 07 – The following questions pertain to Topic 07: Philippine Architecture.",
+  question: "Architect of the PhilAm Life Building.",
+  choices: ["Pablo Antonio", "Carlos Arguelles", "Leandro Locsin", "Jose Maria Zaragoza"],
+  correct: "Carlos Arguelles"
+},
+{
+  situation: "SITUATION 07 – The following questions pertain to Topic 07: Philippine Architecture.",
+  question: "Who is the architect of Iloilo City Hall?",
+  choices: ["Guillermo Hisancha", "Carlos Arguelles", "Juan Arellano", "Tomas Mapua"],
+  correct: "Juan Arellano"
+},
+{
+  situation: "SITUATION 07 – The following questions pertain to Topic 07: Philippine Architecture.",
+  question: "Who is the architect of Capitol Theater?",
+  choices: ["Pablo Antonio", "Juan Nakpil", "Leandro Locsin", "Carlos Arguelles"],
+  correct: "Pablo Antonio"
+},
+{
+  situation: "SITUATION 07 – The following questions pertain to Topic 07: Philippine Architecture.",
+  question: "Which building, designed by Juan F. Nakpil, features a low podium and a 60-meter slab tower clad in a curtain wall?",
+  choices: ["SSS Building", "Philam Life Building", "Department of Justice", "UP Carillon Tower"],
+  correct: "Philam Life Building"
+},
+{
+  situation: "SITUATION 07 – The following questions pertain to Topic 07: Philippine Architecture.",
+  question: "Which school was designed by Antonio Toledo?",
+  choices: ["Far Eastern University", "San Sebastian", "University of the Philippines, P. Faura", "Manuel Luis Quezon University"],
+  correct: "Manuel Luis Quezon University"
+},
+{
+  situation: "SITUATION 07 – The following questions pertain to Topic 07: Philippine Architecture.",
+  question: "Who is the architect of the Paco Train Station?",
+  choices: ["Michael Graves", "William Parsons", "Daniel Burnham", "I. M. Pei"],
+  correct: "William Parsons"
+},
+{
+  situation: "SITUATION 07 – The following questions pertain to Topic 07: Philippine Architecture.",
+  question: "Which Filipino pre-colonial structure was used for sleeping and served as a royal house?",
+  choices: ["Torogan", "Bahay Kubo", "Dap-ay", "Bantayog"],
+  correct: "Torogan"
+},
+{
+  situation: "SITUATION 07 – The following questions pertain to Topic 07: Philippine Architecture.",
+  question: "Which indigenous community is traditionally associated with the Banaue Rice Terraces?",
+  choices: ["Ifugao", "Kalinga", "Tinguian", "Tagbanwa"],
+  correct: "Ifugao"
+},
+{
+  situation: "SITUATION 07 – The following questions pertain to Topic 07: Philippine Architecture.",
+  question: "In the Bahay na Bato, what is the name of the space on the ground floor used for storing the caroza?",
+  choices: ["Azotea", "Zaguan", "Sala", "Comun"],
+  correct: "Zaguan"
+},
+{
+  situation: "SITUATION 07 – The following questions pertain to Topic 07: Philippine Architecture.",
+  question: "What is a Binangiyan house, similar to the Ifugao house, with a ridge parallel to the front and made of narra or pine?",
+  choices: ["Kankanay", "Ifugao house", "Bontoc house", "Kalinga Binayon"],
+  correct: "Bontoc house"
+},
+{
+  situation: "SITUATION 07 – The following questions pertain to Topic 07: Philippine Architecture.",
+  question: "Which site in the Philippines was included in UNESCO’s World Heritage List in 1995?",
+  choices: ["Banaue Rice Terraces", "St. Paul’s Underground Caves, Palawan", "Bamboo Organ, Las Piñas", "Rizal Monument, Luneta"],
+  correct: "Banaue Rice Terraces"
+},
+{
+  situation: "SITUATION 07 – The following questions pertain to Topic 07: Philippine Architecture.",
+  question: "Which small jewel-box church is the first all-steel church in the Philippines and in Asia, and the second in the world?",
+  choices: ["San Sebastian Church", "Baclayon Church", "Basilica Minore del Santo Niño de Cebu", "None of the above"],
+  correct: "San Sebastian Church"
+},
+{
+  situation: "SITUATION 07 – The following questions pertain to Topic 07: Philippine Architecture.",
+  question: "Formally known as the National Shrine of Our Mother of Perpetual Help and more commonly as Baclaran Church, it is considered the most visited church in Asia.",
+  choices: ["Baclayon Church", "San Sebastian Church", "Redemptorist Church", "None of the above"],
+  correct: "Redemptorist Church"
+},
+{
+  situation: "SITUATION 07 – The following questions pertain to Topic 07: Philippine Architecture.",
+  question: "What church is the seat of the Catholic Archdiocese of Manila and is presently the sixth cathedral to rise on the site since 1581?",
+  choices: ["Baclayon Church", "Manila Cathedral", "San Sebastian Church", "None of the above"],
+  correct: "Manila Cathedral"
+},
+{
+  situation: "SITUATION 07 – The following questions pertain to Topic 07: Philippine Architecture.",
+  question: "What is the other name for the Minor Basilica of the Holy Child in Cebu City?",
+  choices: ["Basilica Major del Santo Cristo de Cebu", "Basilica Minore del Santo Niño de Cebu", "Basilica del Major, Santo Major de Cebu", "None of the above"],
+  correct: "Basilica Minore del Santo Niño de Cebu"
+},
+{
+  situation: "SITUATION 07 – The following questions pertain to Topic 07: Philippine Architecture.",
+  question: "Known today as the Basilica of the Immaculate Conception, its first architect was Bishop Domingo Salazar, while the architect of the present church is Fernando Ocampo.",
+  choices: ["San Agustin Church", "Manila Cathedral", "San Sebastian Church", "Sto. Domingo Church"],
+  correct: "Manila Cathedral"
+},
+{
+  situation: "SITUATION 08 – The following questions pertain to Topic 08: Comparative Analysis.",
+  question: "What is the architectural style of Figure A?",
+  choices: ["Art Deco", "Art Nouveau", "Beaux-Arts", "Victorian"],
+  correct: "Beaux-Arts",
+  image: "figure8A.png"
+},
+{
+  situation: "SITUATION 08 – The following questions pertain to Topic 08: Comparative Analysis.",
+  question: "What is the architectural style of Figure B?",
+  choices: ["Art Deco", "Art Nouveau", "Beaux-Arts", "Victorian"],
+  correct: "Art Nouveau",
+  image: "figure8A.png"
+},
+{
+  situation: "SITUATION 08 – The following questions pertain to Topic 08: Comparative Analysis.",
+  question: "What is the architectural style of Figure C?",
+  choices: ["Art Deco", "Art Nouveau", "Beaux-Arts", "Victorian"],
+  correct: "Victorian",
+  image: "figure8A.png"
+},
+{
+  situation: "SITUATION 08 – The following questions pertain to Topic 08: Comparative Analysis.",
+  question: "What is the architectural style of Figure D?",
+  choices: ["Palladian", "Art Deco", "Beaux-Arts", "Victorian"],
+  correct: "Art Deco",
+  image: "figure8A.png"
+},
+{
+  situation: "SITUATION 08 – The following questions pertain to Topic 08: Comparative Analysis.",
+  question: "What is the architectural style of Figure E?",
+  choices: ["Palladian", "Art Nouveau", "Beaux-Arts", "Victorian"],
+  correct: "Palladian",
+  image: "figure8A.png"
+},
+{
+  situation: "SITUATION 08 – The following questions pertain to Topic 08: Comparative Analysis.",
+  question: "What is the architectural style of Figure A?",
+  choices: ["Baroque", "Romanesque", "Renaissance", "Gothic"],
+  correct: "Renaissance",
+  image: "figure8B.png"
+},
+{
+  situation: "SITUATION 08 – The following questions pertain to Topic 08: Comparative Analysis.",
+  question: "What is the architectural style of Figure B?",
+  choices: ["Baroque", "Romanesque", "Renaissance", "Gothic"],
+  correct: "Romanesque",
+  image: "figure8B.png"
+},
+{
+  situation: "SITUATION 08 – The following questions pertain to Topic 08: Comparative Analysis.",
+  question: "What is the architectural style of Figure C?",
+  choices: ["Baroque", "Romanesque", "Byzantine", "Gothic"],
+  correct: "Gothic",
+  image: "figure8B.png"
+},
+{
+  situation: "SITUATION 08 – The following questions pertain to Topic 08: Comparative Analysis.",
+  question: "What is the architectural style of Figure D?",
+  choices: ["Baroque", "Romanesque", "Byzantine", "Gothic"],
+  correct: "Byzantine",
+  image: "figure8B.png"
+},
+{
+  situation: "SITUATION 08 – The following questions pertain to Topic 08: Comparative Analysis.",
+  question: "What is the architectural style of Figure E?",
+  choices: ["Baroque", "Romanesque", "Byzantine", "Gothic"],
+  correct: "Baroque",
+  image: "figure8B.png"
+},
+{
+  situation: "SITUATION 08 – The following questions pertain to Topic 08: Comparative Analysis.",
+  question: "What is the name of Figure A, an example of a Byzantine church?",
+  choices: ["Hagia Sophia", "Hagia Irene", "Basilica of San Vitale", "Church of the Holy Apostle"],
+  correct: "Hagia Sophia",
+  image: "figure8C.png"
+},
+{
+  situation: "SITUATION 08 – The following questions pertain to Topic 08: Comparative Analysis.",
+  question: "What is the name of Figure B, an example of a Renaissance church?",
+  choices: ["Palais Garnier", "St. Peter's Basilica", "Tempietto", "Villa Capra La Rotunda"],
+  correct: "St. Peter's Basilica",
+  image: "figure8C.png"
+},
+{
+  situation: "SITUATION 08 – The following questions pertain to Topic 08: Comparative Analysis.",
+  question: "What is the name of Figure C, an example of a Renaissance chapel?",
+  choices: ["Palais Garnier", "St. Peter's Basilica", "Tempietto", "Villa Capra La Rotunda"],
+  correct: "Tempietto",
+  image: "figure8C.png"
+},
+{
+  situation: "SITUATION 08 – The following questions pertain to Topic 08: Comparative Analysis.",
+  question: "What is the name of Figure D, an example of a Renaissance building?",
+  choices: ["Palais Garnier", "St. Peter's Basilica", "Tempietto", "Villa Capra La Rotunda"],
+  correct: "Villa Capra La Rotunda",
+  image: "figure8C.png"
+},
+{
+  situation: "SITUATION 08 – The following questions pertain to Topic 08: Comparative Analysis.",
+  question: "What is the name of Figure E, an example of a Gothic church?",
+  choices: ["Chartres", "Amiens", "Reims", "Cologne"],
+  correct: "Reims",
+  image: "figure8C.png"
+}
+
+];
+
+/* =========================
+   BUILD SITUATION STATE
+*/
+const situations = {};
+questions.forEach(q => {
+  if (!situations[q.situation]) {
+    situations[q.situation] = {
+      questions: [],
+      index: 0,
+      score: 0,
+      completed: false
+    };
+  }
+  situations[q.situation].questions.push(q);
+});
+
+let currentSituation = null;
+
+/* =========================
+   START
+*/
+function startQuiz() {
+  document.getElementById("start").style.display = "none";
+  showSituationMenu();
+}
+
+/* =========================
+   SITUATION MENU
+*/
+function showSituationMenu() {
+  document.getElementById("quiz").style.display = "none";
+  document.getElementById("summary").style.display = "none";
+  document.getElementById("situationMenu").style.display = "block";
+
+  const list = document.getElementById("situationList");
+  list.innerHTML = "";
+
+  Object.keys(situations).forEach(key => {
+    const s = situations[key];
+    let status = s.completed ? "Completed" :
+                 s.index > 0 ? "In Progress" : "Not Started";
+
+    const btn = document.createElement("button");
+    btn.innerText = `${key} — ${status} (${s.score}/${s.questions.length})`;
+    btn.onclick = () => {
+      currentSituation = key;
+      startSituation();
+    };
+    list.appendChild(btn);
+  });
+}
+
+/* =========================
+   START / RESUME SITUATION
+*/
+function startSituation() {
+  document.getElementById("situationMenu").style.display = "none";
+  document.getElementById("quiz").style.display = "block";
+  loadQuestion();
+}
+
+/* =========================
+   LOAD QUESTION
+*/
+function loadQuestion() {
+  const s = situations[currentSituation];
+  const q = s.questions[s.index];
+
+  situation.innerText = q.situation;
+  question.innerText = q.question;
+  progress.innerText =
+    `Question ${s.index + 1} of ${s.questions.length} | Score: ${s.score}`;
+
+  if (q.image) {
+    figure.src = q.image;
+    figure.style.display = "block";
+  } else {
+    figure.style.display = "none";
+  }
+
+  choices.innerHTML = "";
+
+  [...q.choices]
+    .sort(() => Math.random() - 0.5)
+    .forEach(choice => {
+      const btn = document.createElement("button");
+      btn.innerText = choice;
+      btn.onclick = () => checkAnswer(btn, choice);
+      choices.appendChild(btn);
+    });
+
+  nextBtn.style.display = "none";
+}
+
+/* =========================
+   CHECK ANSWER
+*/
+function checkAnswer(btn, choice) {
+  const s = situations[currentSituation];
+  const q = s.questions[s.index];
+
+  document.querySelectorAll("#choices button")
+    .forEach(b => b.disabled = true);
+
+  if (choice === q.correct) {
+    btn.classList.add("correct");
+    s.score++;
+  } else {
+    btn.classList.add("wrong");
+    document.querySelectorAll("#choices button").forEach(b => {
+      if (b.innerText === q.correct) b.classList.add("correct");
+    });
+  }
+
+  nextBtn.style.display = "block";
+}
+
+/* =========================
+   NEXT QUESTION
+*/
+function nextQuestion() {
+  const s = situations[currentSituation];
+  s.index++;
+
+  if (s.index < s.questions.length) {
+    loadQuestion();
+  } else {
+    s.completed = true;
+    showSituationComplete();
+  }
+}
+
+function showSituationComplete() {
+  const s = situations[currentSituation];
+
+  document.getElementById("quiz").style.display = "none";
+  document.getElementById("situationMenu").style.display = "none";
+  document.getElementById("summary").style.display = "none";
+  document.getElementById("situationComplete").style.display = "block";
+
+  document.getElementById("completeTitle").innerText =
+    currentSituation;
+
+  document.getElementById("completeScore").innerText =
+    `Score: ${s.score} / ${s.questions.length}`;
+}
+
+function restartSituation() {
+  const s = situations[currentSituation];
+
+  s.index = 0;
+  s.score = 0;
+  s.completed = false;
+
+  document.getElementById("situationComplete").style.display = "none";
+  document.getElementById("quiz").style.display = "block";
+
+  loadQuestion();
+}
+
+
+/* =========================
+   FINAL SUMMARY
+*/
+function showFinalSummary() {
+  document.getElementById("quiz").style.display = "none";
+  document.getElementById("situationMenu").style.display = "none";
+  document.getElementById("summary").style.display = "block";
+
+  const list = document.getElementById("summaryList");
+  list.innerHTML = "";
+
+  let totalScore = 0;
+  let totalQuestions = 0;
+
+  Object.keys(situations).forEach(key => {
+    const s = situations[key];
+    const row = document.createElement("p");
+
+    if (s.index === 0 && s.score === 0) {
+      row.innerText = `${key}: Skipped`;
+    } else {
+      row.innerText = `${key}: ${s.score} / ${s.questions.length}`;
+      totalScore += s.score;
+      totalQuestions += s.questions.length;
+    }
+
+    list.appendChild(row);
+  });
+
+  totalScoreElem = document.getElementById("totalScore");
+  totalScoreElem.innerText = `TOTAL SCORE: ${totalScore} / ${totalQuestions}`;
+}
+</script>
+
+</body>
+</html>

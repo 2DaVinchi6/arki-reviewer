@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Board Exam Reviewer Hub</title>
+
+<style>
+:root {
+  --bg: #f4f6f8;
+  --card: #ffffff;
+  --text: #111;
+  --sub: #555;
+  --accent: #4CAF50;
+}
+
+body.dark {
+  --bg: #121212;
+  --card: #1e1e1e;
+  --text: #eee;
+  --sub: #aaa;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  margin: 0;
+  padding-bottom: 80px;
+}
+
+.container {
+  max-width: 900px;
+  margin: auto;
+  padding: 30px;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.header h1 {
+  margin: 0;
+}
+
+.header p {
+  color: var(--sub);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 20px;
+}
+
+.card {
+  background: var(--card);
+  border-radius: 14px;
+  padding: 20px;
+  box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+}
+
+.card h3 {
+  margin-top: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.card p {
+  color: var(--sub);
+  font-size: 14px;
+}
+
+.progress {
+  font-size: 13px;
+  margin: 10px 0;
+}
+
+.progress span {
+  font-weight: bold;
+}
+
+.card button {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.card button:hover {
+  opacity: 0.9;
+}
+
+/* Bottom Nav */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--card);
+  display: flex;
+  justify-content: space-around;
+  padding: 10px 0;
+  border-top: 1px solid #ccc;
+}
+
+.bottom-nav button {
+  background: none;
+  border: none;
+  font-size: 14px;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.bottom-nav button.active {
+  color: var(--accent);
+  font-weight: bold;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+  <div class="header">
+    <h1>📚 Board Exam Reviewer Hub</h1>
+    <p>Select a subject to continue your review</p>
+  </div>
+
+  <div class="grid">
+
+    <div class="card">
+      <h3>🏗 Structural Conceptualization</h3>
+      <p>Loads, formworks, foundations, structural principles.</p>
+      <div class="progress">Progress: <span id="prog-struct">0%</span></div>
+      <button onclick="openReviewer('struct')">Open Reviewer</button>
+    </div>
+
+    <div class="card">
+      <h3>⚖ Professional Practice</h3>
+      <p>Ethics, RA 9266, contracts, responsibilities.</p>
+      <div class="progress">Progress: <span id="prog-pp">0%</span></div>
+      <button onclick="openReviewer('pp')">Open Reviewer</button>
+    </div>
+
+    <div class="card">
+      <h3>🏛 History of Architecture</h3>
+      <p>Periods, movements, styles, key works.</p>
+      <div class="progress">Progress: <span id="prog-history">0%</span></div>
+      <button onclick="openReviewer('history')">Open Reviewer</button>
+    </div>
+
+  </div>
+</div>
+
+<!-- Bottom Navigation -->
+<div class="bottom-nav">
+  <button class="active">🏠 Home</button>
+  <button onclick="toggleDark()">🌙 Dark Mode</button>
+  <button onclick="resetProgress()">♻ Reset</button>
+</div>
+
+<script>
+/* ===== LINKS ===== */
+const links = {
+  struct: "https://2davinchi6.github.io/Board-Exam-Reviewer-Structural-Conceptualization/",
+  pp: "https://2davinchi6.github.io/Board-Exam-Reviewer-Arki-Prof-Prac/",
+  history: "https://2davinchi6.github.io/History-of-Architecture/"
+};
+
+/* ===== OPEN REVIEWER ===== */
+function openReviewer(key) {
+  localStorage.setItem("lastOpened", key);
+  window.location.href = links[key];
+}
+
+/* ===== PROGRESS (manual or auto from reviewer later) ===== */
+function loadProgress() {
+  document.getElementById("prog-struct").innerText =
+    (localStorage.getItem("progress-struct") || 0) + "%";
+  document.getElementById("prog-pp").innerText =
+    (localStorage.getItem("progress-pp") || 0) + "%";
+  document.getElementById("prog-history").innerText =
+    (localStorage.getItem("progress-history") || 0) + "%";
+}
+
+/* ===== DARK MODE ===== */
+function toggleDark() {
+  document.body.classList.toggle("dark");
+  localStorage.setItem("darkMode",
+    document.body.classList.contains("dark"));
+}
+
+if (localStorage.getItem("darkMode") === "true") {
+  document.body.classList.add("dark");
+}
+
+/* ===== RESET ===== */
+function resetProgress() {
+  if (!confirm("Reset all progress?")) return;
+  localStorage.clear();
+  location.reload();
+}
+
+loadProgress();
+</script>
+
+</body>
+</html>
