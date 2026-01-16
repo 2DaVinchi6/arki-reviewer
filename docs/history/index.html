@@ -41,16 +41,9 @@ button {
 
 <body>
 
-<!-- START -->
-<div class="container" id="start">
-  <h2>History of Architecture</h2>
-  <input id="username" placeholder="Enter your name" style="width:100%;padding:10px;">
-  <button onclick="startQuiz()">Start Quiz</button>
-</div>
-
 <!-- SITUATION MENU -->
-<div class="container" id="situationMenu" style="display:none;">
-  <h2>Select Situation</h2>
+<div class="container" id="situationMenu">
+  <h2>History of Architecture</h2>
   <div id="situationList"></div>
   <button onclick="showFinalSummary()">Finish Review</button>
 </div>
@@ -62,13 +55,12 @@ button {
   <img id="figure">
   <div id="choices"></div>
   <button id="nextBtn" onclick="nextQuestion()">Next</button>
-  
   <p id="progress"></p>
 </div>
 
 <!-- SITUATION COMPLETE -->
 <div class="container" id="situationComplete" style="display:none;">
-  <h2 id="completeTitle">Situation Complete</h2>
+  <h2 id="completeTitle"></h2>
   <p id="completeScore"></p>
 
   <button onclick="restartSituation()" style="background:#ff9800;color:#fff;">
@@ -79,7 +71,6 @@ button {
     Back to Situation Menu
   </button>
 </div>
-
 
 <!-- FINAL SUMMARY -->
 <div class="container" id="summary" style="display:none;">
@@ -94,12 +85,11 @@ button {
 
 <script>
 /* =========================
-   QUESTION BANK
-   =========================
-   👉 PASTE YOUR QUESTIONS HERE
+   QUESTIONS
+   👉 PASTE YOUR QUESTIONS ARRAY HERE
 */
 const questions = [
-{
+ {
   situation: "SITUATION 01 – The following questions pertain to Topic 01: Pre-Historic Architecture. Using Figure H01-A, identify the  different locations of these pre-historic buildings.",
   question: "Structure A can be found in",
   choices: ["Jordan", "Iraq", "Syria", "Egypt"],
@@ -3939,11 +3929,10 @@ const questions = [
   correct: "Reims",
   image: "figure8C.png"
 }
-
 ];
 
 /* =========================
-   BUILD SITUATION STATE
+   BUILD SITUATIONS
 */
 const situations = {};
 questions.forEach(q => {
@@ -3961,19 +3950,39 @@ questions.forEach(q => {
 let currentSituation = null;
 
 /* =========================
-   START
+   STORAGE
 */
-function startQuiz() {
-  document.getElementById("start").style.display = "none";
-  showSituationMenu();
+function saveSituationState() {
+  localStorage.setItem("history-situations", JSON.stringify(situations));
+}
+
+function saveHubProgress() {
+  let answered = 0;
+  let total = 0;
+
+  Object.values(situations).forEach(s => {
+    answered += s.index;
+    total += s.questions.length;
+  });
+
+  const percent = total === 0 ? 0 : Math.floor((answered / total) * 100);
+  localStorage.setItem("progress-history", percent);
+}
+
+/* LOAD SAVED */
+const saved = localStorage.getItem("history-situations");
+if (saved) {
+  const parsed = JSON.parse(saved);
+  Object.keys(parsed).forEach(k => {
+    if (situations[k]) Object.assign(situations[k], parsed[k]);
+  });
 }
 
 /* =========================
-   SITUATION MENU
+   MENU
 */
 function showSituationMenu() {
-  document.getElementById("quiz").style.display = "none";
-  document.getElementById("summary").style.display = "none";
+  hideAll();
   document.getElementById("situationMenu").style.display = "block";
 
   const list = document.getElementById("situationList");
@@ -3981,8 +3990,11 @@ function showSituationMenu() {
 
   Object.keys(situations).forEach(key => {
     const s = situations[key];
-    let status = s.completed ? "Completed" :
-                 s.index > 0 ? "In Progress" : "Not Started";
+    let status = s.completed
+      ? "Completed"
+      : s.index > 0
+      ? "In Progress"
+      : "Not Started";
 
     const btn = document.createElement("button");
     btn.innerText = `${key} — ${status} (${s.score}/${s.questions.length})`;
@@ -3995,17 +4007,14 @@ function showSituationMenu() {
 }
 
 /* =========================
-   START / RESUME SITUATION
+   QUIZ
 */
 function startSituation() {
-  document.getElementById("situationMenu").style.display = "none";
+  hideAll();
   document.getElementById("quiz").style.display = "block";
   loadQuestion();
 }
 
-/* =========================
-   LOAD QUESTION
-*/
 function loadQuestion() {
   const s = situations[currentSituation];
   const q = s.questions[s.index];
@@ -4023,22 +4032,16 @@ function loadQuestion() {
   }
 
   choices.innerHTML = "";
-
-  [...q.choices]
-    .sort(() => Math.random() - 0.5)
-    .forEach(choice => {
-      const btn = document.createElement("button");
-      btn.innerText = choice;
-      btn.onclick = () => checkAnswer(btn, choice);
-      choices.appendChild(btn);
-    });
+  [...q.choices].sort(() => Math.random() - 0.5).forEach(choice => {
+    const btn = document.createElement("button");
+    btn.innerText = choice;
+    btn.onclick = () => checkAnswer(btn, choice);
+    choices.appendChild(btn);
+  });
 
   nextBtn.style.display = "none";
 }
 
-/* =========================
-   CHECK ANSWER
-*/
 function checkAnswer(btn, choice) {
   const s = situations[currentSituation];
   const q = s.questions[s.index];
@@ -4060,55 +4063,54 @@ function checkAnswer(btn, choice) {
 }
 
 /* =========================
-   NEXT QUESTION
+   NEXT
 */
 function nextQuestion() {
   const s = situations[currentSituation];
   s.index++;
 
+  saveSituationState();
+  saveHubProgress();
+
   if (s.index < s.questions.length) {
     loadQuestion();
   } else {
     s.completed = true;
+    saveSituationState();
+    saveHubProgress();
     showSituationComplete();
   }
 }
 
+/* =========================
+   COMPLETE
+*/
 function showSituationComplete() {
+  hideAll();
   const s = situations[currentSituation];
-
-  document.getElementById("quiz").style.display = "none";
-  document.getElementById("situationMenu").style.display = "none";
-  document.getElementById("summary").style.display = "none";
   document.getElementById("situationComplete").style.display = "block";
-
-  document.getElementById("completeTitle").innerText =
-    currentSituation;
-
+  document.getElementById("completeTitle").innerText = currentSituation;
   document.getElementById("completeScore").innerText =
     `Score: ${s.score} / ${s.questions.length}`;
 }
 
 function restartSituation() {
   const s = situations[currentSituation];
-
   s.index = 0;
   s.score = 0;
   s.completed = false;
 
-  document.getElementById("situationComplete").style.display = "none";
-  document.getElementById("quiz").style.display = "block";
+  saveSituationState();
+  saveHubProgress();
 
-  loadQuestion();
+  startSituation();
 }
 
-
 /* =========================
-   FINAL SUMMARY
+   SUMMARY
 */
 function showFinalSummary() {
-  document.getElementById("quiz").style.display = "none";
-  document.getElementById("situationMenu").style.display = "none";
+  hideAll();
   document.getElementById("summary").style.display = "block";
 
   const list = document.getElementById("summaryList");
@@ -4119,22 +4121,32 @@ function showFinalSummary() {
 
   Object.keys(situations).forEach(key => {
     const s = situations[key];
-    const row = document.createElement("p");
+    const p = document.createElement("p");
 
     if (s.index === 0 && s.score === 0) {
-      row.innerText = `${key}: Skipped`;
+      p.innerText = `${key}: Not Started`;
     } else {
-      row.innerText = `${key}: ${s.score} / ${s.questions.length}`;
+      p.innerText = `${key}: ${s.score}/${s.questions.length}`;
       totalScore += s.score;
       totalQuestions += s.questions.length;
     }
 
-    list.appendChild(row);
+    list.appendChild(p);
   });
 
-  totalScoreElem = document.getElementById("totalScore");
-  totalScoreElem.innerText = `TOTAL SCORE: ${totalScore} / ${totalQuestions}`;
+  totalScoreElem.innerText =
+    `TOTAL SCORE: ${totalScore} / ${totalQuestions}`;
 }
+
+/* =========================
+   UTIL
+*/
+function hideAll() {
+  ["situationMenu","quiz","summary","situationComplete"]
+    .forEach(id => document.getElementById(id).style.display = "none");
+}
+
+window.onload = showSituationMenu;
 </script>
 
 </body>
