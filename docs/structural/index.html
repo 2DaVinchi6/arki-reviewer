@@ -21,7 +21,6 @@ img { max-width:100%; margin-top:10px; }
 <!-- START -->
 <div class="container" id="start">
   <h2>Structural Conceptualization Quiz Reviewer</h2>
-  <input id="username" placeholder="Enter your name" style="width:100%;padding:10px;">
   <button onclick="startQuiz()">Start Quiz</button>
 </div>
 
@@ -3195,6 +3194,41 @@ questions.forEach(q => {
 
 let currentSituation = null;
 
+  function saveSituationState() {
+  localStorage.setItem(
+    "struct-situations",
+    JSON.stringify(situations)
+  );
+}
+
+function saveHubProgress() {
+  let answered = 0;
+
+  Object.values(situations).forEach(s => {
+    answered += s.index;
+  });
+
+  const total = Object.values(situations)
+    .reduce((sum, s) => sum + s.questions.length, 0);
+
+  const percent = total === 0 ? 0 : Math.floor((answered / total) * 100);
+  localStorage.setItem("progress-struct", percent);
+}
+const savedSituations = localStorage.getItem("struct-situations");
+
+if (savedSituations) {
+  const parsed = JSON.parse(savedSituations);
+
+  Object.keys(parsed).forEach(key => {
+    if (situations[key]) {
+      situations[key].index = parsed[key].index || 0;
+      situations[key].score = parsed[key].score || 0;
+      situations[key].completed = parsed[key].completed || false;
+    }
+  });
+}
+
+  
 /* ========= START ========= */
 function startQuiz() {
   document.getElementById("start").style.display = "none";
@@ -3318,11 +3352,15 @@ function restartSituation() {
   s.score = 0;
   s.completed = false;
 
+  saveSituationState();   // ✅ ADD
+  saveHubProgress();      // ✅ ADD
+
   document.getElementById("situationComplete").style.display = "none";
   document.getElementById("quiz").style.display = "block";
 
   loadQuestion();
 }
+
 
 
 /* ========= CHECK ANSWER ========= */
@@ -3352,14 +3390,23 @@ function nextQuestion() {
   const s = situations[currentSituation];
   s.index++;
 
+  saveSituationState();   // ✅ ADD
+  saveHubProgress();      // ✅ ADD
+
   if (s.index < s.questions.length) {
     loadQuestion();
   } else {
     s.completed = true;
+
+    saveSituationState(); // ✅ ADD
+    saveHubProgress();    // ✅ ADD
+
     showSituationComplete();
   }
 }
+
 </script>
 
 </body>
 </html>
+
