@@ -67,7 +67,9 @@ button {
   <button onclick="restartSituation()" style="background:#ff9800;color:#fff;">
     Restart This Situation
   </button>
-
+ <button onclick="backToReviewHub()" style="background:#555;color:#fff;">
+    ⬅ Back to Review Hub
+  </button>
   <button onclick="showSituationMenu()">Back</button>
 </div>
 
@@ -4148,6 +4150,10 @@ function hideAll() {
   document.querySelectorAll(".container").forEach(c => c.style.display = "none");
 }
 
+  function backToReviewHub() {
+  window.location.href = "../index.html";
+}
+
 /* =========================
    INIT
    ========================= */
@@ -4156,5 +4162,6 @@ showSituationMenu();
 
 </body>
 </html>
+
 
 
