@@ -33,14 +33,21 @@ img { max-width:100%; margin-top:10px; }
 
 
 <!-- QUIZ -->
+<!-- QUIZ -->
 <div class="container" id="quiz" style="display:none;">
+
+  <button onclick="goBackToHub()" style="background:#555;color:#fff;">
+    ⬅ Back to Hub
+  </button>
+
   <h3 id="situation"></h3>
   <p id="question"></p>
   <img id="figure" style="display:none;">
   <div id="choices"></div>
-  <button id="nextBtn" style="display:none;" onclick="nextQuestion()">Next</button>
+  <button id="nextBtn" onclick="nextQuestion()">Next</button>
   <p id="progress"></p>
 </div>
+
 
 <!-- SITUATION COMPLETE -->
 <div class="container" id="situationComplete" style="display:none;">
@@ -3391,4 +3398,5 @@ window.onload = showSituationMenu;
 
 </body>
 </html>
+
 
