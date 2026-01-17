@@ -4,42 +4,42 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>QUIZ TITLE HERE</title>
+<title>Professional Practice Reviewer</title>
 
 <style>
 /* =========================
-   BASE THEME
+   LIGHT MODE (UNCHANGED)
    ========================= */
 body {
   font-family: Arial, sans-serif;
-  background: #f4f6f8;
-  margin: 0;
-  padding: 20px;
+  background:#f4f6f8;
+  padding:20px;
+  margin:0;
 }
 
 .container {
-  max-width: 760px;
-  margin: auto;
-  background: #ffffff;
-  padding: 20px;
-  border-radius: 8px;
+  max-width:760px;
+  margin:auto;
+  background:#fff;
+  padding:20px;
+  border-radius:8px;
 }
 
 button {
-  width: 100%;
-  padding: 12px;
-  margin: 8px 0;
-  font-size: 16px;
-  cursor: pointer;
-  border: none;
-  background: #333;
-  color: #fff;
+  width:100%;
+  padding:12px;
+  margin:8px 0;
+  font-size:16px;
+  cursor:pointer;
+  background:#eee;
+  border:1px solid #999;
+  color:#111;
 }
 
-button:hover { opacity: 0.9; }
+button:hover { background:#e0e0e0; }
 
-.correct { background: #4CAF50 !important; }
-.wrong { background: #F44336 !important; }
+.correct { background:#4CAF50 !important; color:#fff; }
+.wrong { background:#F44336 !important; color:#fff; }
 
 #figure { max-width:100%; margin-top:10px; display:none; }
 #nextBtn { display:none; }
@@ -52,31 +52,56 @@ button:hover { opacity: 0.9; }
 }
 
 /* =========================
-   DARK MODE
+   DARK MODE (IMPROVED)
    ========================= */
 body.dark {
-  background: #121212;
-  color: #eee;
+  background:#121212;
+  color:#eee;
 }
 
 body.dark .container {
-  background: #1e1e1e;
+  background:#1e1e1e;
 }
 
 body.dark button {
-  background: #444;
+  background:#2a2a2a;
+  color:#f0f0f0;
+  border:1px solid #444;
+}
+
+body.dark button:hover {
+  background:#333;
 }
 
 body.dark .correct {
-  background: #2e7d32 !important;
+  background:#2e7d32 !important;
 }
 
 body.dark .wrong {
-  background: #8e2f2f !important;
+  background:#8e2f2f !important;
 }
 
 body.dark .watermark {
-  color: #888;
+  color:#777;
+}
+
+/* =========================
+   DARK MODE TOGGLE BAR
+   ========================= */
+.dark-toggle {
+  background:#1f1f1f;
+  color:#fff;
+  border:none;
+  padding:14px;
+  font-size:15px;
+  border-radius:6px;
+  margin-bottom:15px;
+}
+
+body:not(.dark) .dark-toggle {
+  background:#eee;
+  color:#111;
+  border:1px solid #ccc;
 }
 </style>
 </head>
@@ -87,15 +112,13 @@ body.dark .watermark {
 <div class="container" id="menu">
   <h2>Select Situation</h2>
 
-  <button onclick="toggleDarkMode()">🌙 Toggle Dark Mode</button>
+  <button class="dark-toggle" onclick="toggleDarkMode()">🌙 Dark Mode</button>
 
   <div id="situationList"></div>
 
   <button onclick="finishReview()">Finish Review</button>
 
-  <button onclick="backToHub()" style="background:#666;">
-    ⬅ Back to Review Hub
-  </button>
+  <button onclick="backToHub()">⬅ Back to Review Hub</button>
 </div>
 
 <!-- ===== QUIZ ===== -->
@@ -109,15 +132,12 @@ body.dark .watermark {
   <p id="progress"></p>
 </div>
 
-<!-- ===== SITUATION COMPLETE ===== -->
+<!-- ===== COMPLETE ===== -->
 <div class="container" id="complete" style="display:none;">
   <h2 id="completeTitle"></h2>
   <p id="completeScore"></p>
 
-  <button onclick="restartSituation()" style="background:#ff9800;">
-    Restart Situation
-  </button>
-
+  <button onclick="restartSituation()">Restart Situation</button>
   <button onclick="showMenu()">Back to Situations</button>
 </div>
 
@@ -126,7 +146,6 @@ body.dark .watermark {
   <h2>Final Summary</h2>
   <div id="summaryList"></div>
   <p id="totalScore"></p>
-
   <button onclick="resetAll()">Restart Everything</button>
 </div>
 
@@ -134,16 +153,16 @@ body.dark .watermark {
 
 <script>
 /* =========================
-   CONFIG (CHANGE PER QUIZ)
+   CONFIG
    ========================= */
-const STORAGE_KEY = "QUIZ_KEY_HERE"; // e.g. "struct-situations"
-const BACK_TO_HUB_URL = "../index.html";
+const STORAGE_KEY = "pp-situations"; // CHANGE PER QUIZ
+const HUB_URL = "../index.html";
 
 /* =========================
    QUESTIONS
    ========================= */
 const questions = [
-  {
+ {
 
   situation: "Situation 10 – Structural Systems (Figures)",
   question: "Which figure uses diagonal structural technology?",
@@ -3283,31 +3302,24 @@ function saveState() {
    UI NAV
    ========================= */
 function hideAll() {
-  document.querySelectorAll(".container").forEach(c => c.style.display = "none");
+  document.querySelectorAll(".container").forEach(c => c.style.display="none");
 }
 
 function showMenu() {
   hideAll();
-  document.getElementById("menu").style.display = "block";
+  menu.style.display="block";
   renderMenu();
 }
 
 function renderMenu() {
-  const list = document.getElementById("situationList");
-  list.innerHTML = "";
-
+  situationList.innerHTML="";
   Object.keys(situations).forEach(key => {
     const s = situations[key];
-    const status = s.completed ? "Completed" :
-                   s.index > 0 ? "In Progress" : "Not Started";
-
+    const status = s.completed ? "Completed" : s.index > 0 ? "In Progress" : "Not Started";
     const btn = document.createElement("button");
     btn.innerText = `${key} — ${status} (${s.score}/${s.questions.length})`;
-    btn.onclick = () => {
-      currentSituation = key;
-      startSituation();
-    };
-    list.appendChild(btn);
+    btn.onclick = () => { currentSituation = key; startSituation(); };
+    situationList.appendChild(btn);
   });
 }
 
@@ -3316,7 +3328,7 @@ function renderMenu() {
    ========================= */
 function startSituation() {
   hideAll();
-  document.getElementById("quiz").style.display = "block";
+  quiz.style.display="block";
   loadQuestion();
 }
 
@@ -3325,42 +3337,36 @@ function loadQuestion() {
   if (s.index >= s.questions.length) return showComplete();
 
   const q = s.questions[s.index];
-
   situation.innerText = q.situation;
   question.innerText = q.question;
-  progress.innerText = `Question ${s.index+1} / ${s.questions.length} | Score: ${s.score}`;
+  progress.innerText = `Question ${s.index+1} of ${s.questions.length} | Score: ${s.score}`;
 
   figure.style.display = q.image ? "block" : "none";
   if (q.image) figure.src = q.image;
 
-  choices.innerHTML = "";
-  [...q.choices].sort(() => Math.random()-0.5).forEach(c => {
-    const b = document.createElement("button");
-    b.innerText = c;
-    b.onclick = () => checkAnswer(b, c);
+  choices.innerHTML="";
+  [...q.choices].sort(()=>Math.random()-0.5).forEach(c=>{
+    const b=document.createElement("button");
+    b.innerText=c;
+    b.onclick=()=>checkAnswer(b,c);
     choices.appendChild(b);
   });
 
-  nextBtn.style.display = "none";
+  nextBtn.style.display="none";
 }
 
 function checkAnswer(btn, choice) {
   const s = situations[currentSituation];
   const q = s.questions[s.index];
+  document.querySelectorAll("#choices button").forEach(b=>b.disabled=true);
 
-  document.querySelectorAll("#choices button").forEach(b => b.disabled = true);
-
-  if (choice === q.correct) {
-    btn.classList.add("correct");
-    s.score++;
-  } else {
+  if (choice===q.correct){ btn.classList.add("correct"); s.score++; }
+  else {
     btn.classList.add("wrong");
-    document.querySelectorAll("#choices button")
-      .forEach(b => b.innerText === q.correct && b.classList.add("correct"));
+    [...choices.children].forEach(b=>b.innerText===q.correct && b.classList.add("correct"));
   }
-
   saveState();
-  nextBtn.style.display = "block";
+  nextBtn.style.display="block";
 }
 
 function nextQuestion() {
@@ -3371,20 +3377,17 @@ function nextQuestion() {
 
 function showComplete() {
   hideAll();
-  document.getElementById("complete").style.display = "block";
-
+  complete.style.display="block";
   const s = situations[currentSituation];
-  completeTitle.innerText = currentSituation;
-  completeScore.innerText = `Score: ${s.score}/${s.questions.length}`;
-  s.completed = true;
+  s.completed=true;
   saveState();
+  completeTitle.innerText=currentSituation;
+  completeScore.innerText=`Score: ${s.score}/${s.questions.length}`;
 }
 
 function restartSituation() {
   const s = situations[currentSituation];
-  s.index = 0;
-  s.score = 0;
-  s.completed = false;
+  s.index=0; s.score=0; s.completed=false;
   saveState();
   startSituation();
 }
@@ -3394,19 +3397,16 @@ function restartSituation() {
    ========================= */
 function finishReview() {
   hideAll();
-  document.getElementById("summary").style.display = "block";
-
-  let ts = 0, tq = 0;
-  summaryList.innerHTML = "";
-
-  Object.values(situations).forEach(s => {
-    const p = document.createElement("p");
-    p.innerText = `${s.questions[0].situation}: ${s.score}/${s.questions.length}`;
+  summary.style.display="block";
+  summaryList.innerHTML="";
+  let ts=0,tq=0;
+  Object.values(situations).forEach(s=>{
+    const p=document.createElement("p");
+    p.innerText=`${s.questions[0].situation}: ${s.score}/${s.questions.length}`;
     summaryList.appendChild(p);
-    ts += s.score; tq += s.questions.length;
+    ts+=s.score; tq+=s.questions.length;
   });
-
-  totalScore.innerText = `TOTAL: ${ts}/${tq}`;
+  totalScore.innerText=`TOTAL: ${ts}/${tq}`;
 }
 
 function resetAll() {
@@ -3415,19 +3415,22 @@ function resetAll() {
 }
 
 /* =========================
-   HUB + DARK MODE
+   DARK MODE (GLOBAL)
    ========================= */
-function backToHub() {
-  window.location.href = BACK_TO_HUB_URL;
-}
-
 function toggleDarkMode() {
   const isDark = document.body.classList.toggle("dark");
-  localStorage.setItem("global-dark-mode", isDark);
+  localStorage.setItem("global-dark-mode", isDark ? "true" : "false");
 }
 
-if (localStorage.getItem("global-dark-mode") === "true") {
+if (localStorage.getItem("global-dark-mode")==="true") {
   document.body.classList.add("dark");
+}
+
+/* =========================
+   HUB
+   ========================= */
+function backToHub() {
+  window.location.href = HUB_URL;
 }
 
 /* =========================
