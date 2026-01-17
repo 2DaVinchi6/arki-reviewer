@@ -193,14 +193,16 @@ function loadProgress() {
 
 /* ===== DARK MODE ===== */
 function toggleDark() {
-  document.body.classList.toggle("dark");
-  localStorage.setItem("darkMode",
-    document.body.classList.contains("dark"));
+  const isDark = document.body.classList.toggle("dark");
+  localStorage.setItem("global-dark-mode", isDark ? "true" : "false");
 }
 
-if (localStorage.getItem("darkMode") === "true") {
+
+// ===== GLOBAL DARK MODE (page load) =====
+if (localStorage.getItem("global-dark-mode") === "true") {
   document.body.classList.add("dark");
 }
+
 
 /* ===== RESET ===== */
 function resetProgress() {
@@ -214,4 +216,5 @@ loadProgress();
 
 </body>
 </html>
+
 
