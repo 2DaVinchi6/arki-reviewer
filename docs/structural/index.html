@@ -3420,6 +3420,10 @@ function hideAll() {
   function backToReviewHub() {
   window.location.href = "../index.html";
 }
+// ===== GLOBAL DARK MODE (READ ONLY) =====
+if (localStorage.getItem("global-dark-mode") === "true") {
+  document.body.classList.add("dark");
+}
 
 /* =========================
    INIT
@@ -3430,6 +3434,7 @@ showSituationMenu();
 
 </body>
 </html>
+
 
 
 
