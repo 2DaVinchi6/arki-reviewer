@@ -36,34 +36,73 @@ button {
   color:#aaa;
   margin-top:30px;
 }
-  /* ===== DARK MODE (QUIZ) ===== */
+ /* ===== DARK MODE (IMPROVED READABILITY) ===== */
+
 body.dark {
-  background:#121212;
+  background: #121212;
+  color: #eaeaea;
 }
 
+/* Main containers */
 body.dark .container {
-  background:#1e1e1e;
-  color:#eee;
+  background: #1e1e1e;
+  color: #eaeaea;
 }
 
-body.dark h2,
-body.dark h3,
-body.dark p {
-  color:#eee;
+/* Situation list buttons */
+body.dark #situationList button {
+  background: #2a2a2a;
+  color: #f5f5f5;
+  border: 1px solid #3a3a3a;
 }
 
+/* Hover / focus for situation buttons */
+body.dark #situationList button:hover {
+  background: #333;
+}
+
+/* Quiz choice buttons */
 body.dark #choices button {
-  background:#333;
-  color:#fff;
+  background: #2b2b2b;
+  color: #f0f0f0;
+  border: 1px solid #444;
 }
 
+/* Correct / wrong states */
 body.dark #choices button.correct {
-  background:#4CAF50;
+  background: #2e7d32;
+  color: #fff;
 }
 
 body.dark #choices button.wrong {
-  background:#F44336;
+  background: #8e2f2f;
+  color: #fff;
 }
+
+/* Navigation & action buttons */
+body.dark button {
+  background: #3a3a3a;
+  color: #fff;
+}
+
+body.dark button:hover {
+  background: #444;
+}
+
+/* Headings & text */
+body.dark h1,
+body.dark h2,
+body.dark h3,
+body.dark p {
+  color: #eaeaea;
+}
+
+/* Progress / small text */
+body.dark #progress,
+body.dark .watermark {
+  color: #bdbdbd;
+}
+
 
 </style>
 </head>
@@ -3463,6 +3502,7 @@ showSituationMenu();
 
 </body>
 </html>
+
 
 
 
