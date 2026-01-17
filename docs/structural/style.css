@@ -45,3 +45,45 @@ footer {
   font-size: 10px;
   opacity: 0.4;
 }
+
+/* =========================
+   GLOBAL DARK MODE
+   ========================= */
+
+body.dark {
+  background: #121212;
+  color: #eee;
+}
+
+body.dark .container {
+  background: #1e1e1e;
+}
+
+body.dark h1,
+body.dark h2 {
+  color: #eee;
+}
+
+body.dark .choice {
+  border-color: #444;
+  background: #2a2a2a;
+  color: #eee;
+}
+
+body.dark .choice.correct {
+  background: #2e7d32; /* green but dark */
+}
+
+body.dark .choice.wrong {
+  background: #8e2f2f; /* red but dark */
+}
+
+body.dark button {
+  background: #333;
+  color: #fff;
+}
+
+body.dark footer {
+  color: #aaa;
+  opacity: 0.6;
+}
